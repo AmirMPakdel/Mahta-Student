@@ -10,48 +10,46 @@ const config = require('../config/config');
 const studentHandler = require('../utils/studentHandler');
 const purchaseHandler = require('../utils/purchaseHandler');
 const giftHandler = require('../utils/giftHandler');
+const errHandler = require('../utils/errHandler');
 
 // Bring in Models
-let User = require('../models/user');
 let Student = require('../models/student');
 
 // authenticate process
 router.post('/authenticate', (req, res) => {
 
-    const { username, password } = req.body;
+    const { code, password } = req.body;
 
-    User.findOne({ username }, function(err, user) {
+    Student.findOne({ code }, function(err, student) {
 
         if (err) {
+            errHandler(err);
 
-            config.error(err);
-            res.status(consts.INT_ERR_CODE)
-                .json({
-                    error: consts.ERR
-                });
-        } else if (!user) {
+        } else if (!student) {
 
             res.status(consts.UNAUTHORIZED_CODE)
                 .json({
-                    error: consts.INCORRECT_USER
+                    error: consts.INCORRECT_MAHTA_ID
                 });
-        } else {
+        } else { // if found student
+
+            if (student.password === password) {
 
             // Match password
-            bcrypt.compare(password, user.password, (err, isMatch) => {
-
-                if (err) throw err;
-
-                if (isMatch) {
+            // bcrypt.compare(password, student.password, (err, isMatch) => {
+            //
+            //     if (err) throw err;
+            //
+            //     if (isMatch) {
 
                     // Issue token
-                    const payload = { username: username };
+                    const payload = { code: code };
                     const token = jwt.sign(payload, config.jwtSecret, {
                         expiresIn: '5h'
                     });
 
                     try {
-                        res.cookie('token', token, { httpOnly: true }).sendStatus(200);
+                        res.cookie('stoken', token, { httpOnly: true }).sendStatus(200);
 
                     } catch (e) {
                         config.log(e)
@@ -66,7 +64,7 @@ router.post('/authenticate', (req, res) => {
                             error: consts.INCORRECT_PASSWORD
                         });
                 }
-            });
+            // });
 
         }
     });
@@ -81,7 +79,7 @@ router.post('/checkToken', withAuth, function(req, res) {
 router.post('/logout', (req, res)=>{
     const token = jwt.sign({username:"unknown"},"something",{expiresIn:'1s'});
     try {
-        res.cookie('token', token, { httpOnly: true }).sendStatus(200);
+        res.cookie('stoken', token, { httpOnly: true }).sendStatus(200);
 
     } catch (e) {
         res.status(404).send("مشکل در خروج");

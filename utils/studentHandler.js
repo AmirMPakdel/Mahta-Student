@@ -52,8 +52,6 @@ async function checkCode(req, res, next) {
 
     });
 
-    next();
-
 }
 
 /*

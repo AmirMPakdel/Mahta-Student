@@ -1,11 +1,11 @@
 const jwt = require('jsonwebtoken');
-const config = require('../config/config');
 
+const config = require('../config/config');
 const consts = require('../utils/consts');
 
 const withAuth = function (req, res, next) {
 
-  const token = req.cookies.token;
+  const token = req.cookies.stoken;
 
   if (!token) { // no token
     res.status(consts.UNAUTHORIZED_CODE).send('Unauthorized: No token provided');
@@ -19,7 +19,7 @@ const withAuth = function (req, res, next) {
 
       } else { // valid token
 
-        req.username = decoded.username;
+        req.code = decoded.code;
         next();
 
       }
