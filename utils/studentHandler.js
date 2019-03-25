@@ -530,4 +530,4 @@ async  function groupCommit(req, res, next) {
 
 
 
-module.exports = {getStudentList: checkCode, addStudent: register, editStudent, deleteStudent, getGPList, spendCredit, groupCommit};
+module.exports = {checkCode,  register, editStudent, deleteStudent, getGPList, spendCredit, groupCommit};

@@ -88,8 +88,8 @@ router.post('/logout', (req, res)=>{
 
 
 
-router.post('/checkCode', studentHandler.getStudentList);
-router.post('/register', studentHandler.addStudent);
+router.post('/checkCode', studentHandler.checkCode);
+router.post('/register', studentHandler.register);
 
 // router.post('/editStudent', withAuth, studentHandler.editStudent);
 // router.post('/deleteStudent', withAuth, studentHandler.deleteStudent);
