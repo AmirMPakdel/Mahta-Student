@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const secret = 'JesusChrist';
+const config = require('../config/config');
 
 const consts = require('../utils/consts');
 
@@ -12,7 +12,7 @@ const withAuth = function (req, res, next) {
 
   } else {
 
-    jwt.verify(token, secret, function(err, decoded) {
+    jwt.verify(token, config.jwtSecret, function(err, decoded) {
       if (err) { // invalid token
 
         res.status(consts.UNAUTHORIZED_CODE).send('Unauthorized: Invalid token');

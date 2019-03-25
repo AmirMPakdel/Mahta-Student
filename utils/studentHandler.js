@@ -1,134 +1,199 @@
-const mongoose = require('mongoose');
 const consts = require('./consts');
 const errHandler = require('./errHandler');
 const giftHandler = require('./giftHandler');
 const purchaseHandler = require('./purchaseHandler');
 const config = require('../config/config');
 const validator = require('../tools/validator');
+const dateConverter = require('../tools/dateConverter');
 
 // Requiring models
 let Student = require('../models/student');
 
 
-async function getStudentList(req, res, next) {
-
-    // config.log(req.cookies.token);
-
-    // projecting fields
-    await Student.find({}, { __v: 0 }, (err, students) => {
-
-        if (err) {
-            errHandler(err);
-
-        } else {
-            res.status(consts.SUCCESS_CODE).json(students);
-
-        }
-    });
-}
-
-async function addStudent(req, res, next) {
+/*
+* checking temporary code
+* */
+async function checkCode(req, res, next) {
 
     let params = req.body;
 
     let issue = validator.hasCode(req, res, params);
     if (issue) return;
 
-    let newStudent = new Student({});
-
-    let query = { // no need need to convert to Number in add/edit :|
+    let query = {
         code: params.code
     };
 
-    // check if any student already own requested code
     await Student.findOne(query, function(err, student) {
 
         if (err) {
-            issue = true;
             errHandler(err, res);
 
-        } else if (student) { // if a student owns requested Code
+        } else if (student) { // if a student was found
 
-            issue = true; // must use Promises or async/await to make this shit work
-            res.status(consts.BAD_REQ_CODE)
+            if (!student.firstName && !student.lastName) { // if student wasn't registered before
+
+                res.sendStatus(consts.SUCCESS_CODE);
+
+            } else { // if student was registered before
+
+                res.status(consts.BAD_REQ_CODE)
+                    .json({
+                        error: consts.STUDENT_ALREADY_REGISTERED
+                    });
+            }
+        } else { // if found no student
+
+            res.status(consts.NOT_FOUND_CODE)
                 .json({
-                    error: consts.MAHTA_CODE_EXISTS
+                    error: consts.INCORRECT_MAHTA_ID
                 });
+        }
+
+    });
+
+    next();
+
+}
+
+/*
+* registering student
+* */
+async function register(req, res, next) {
+
+    let params = req.body;
+
+    let issue = validator.hasCode(req, res, params);
+    if (issue) return;
+
+    let query = {
+        code: params.code
+    };
+
+    let studentToRegister;
+
+    await Student.findOne(query, function(err, student) {
+
+        if (err) {
+            errHandler(err, res);
+
+        } else if (student) { // if a student was found
+
+            if (!student.firstName && !student.lastName) { // if student wasn't registered before
+
+                config.log(`student wasn't registered`);
+
+                student.firstName = params.firstName;
+                student.lastName = params.lastName;
+                student.field = params.field;
+                student.grade = params.grade;
+                student.school = params.school;
+                student.phone = params.phone;
+                student.home = params.home;
+                student.password = params.password;
+
+                studentToRegister = student;
+
+            } else { // if student was registered before
+
+                res.status(consts.BAD_REQ_CODE)
+                    .json({
+                        error: consts.STUDENT_ALREADY_REGISTERED
+                    });
+            }
+        }
+
+    });
+
+    // creating main code
+    studentToRegister.code = await createCode(studentToRegister.grade);
+
+    studentToRegister.save((err => {
+        config.log(`in save student & student.code is ${studentToRegister.code}`);
+        if (err) {
+            issue = true;
+            errHandler(err, res);
+        } else {
+            res.status(consts.SUCCESS_CODE).json(studentToRegister);
+        }
+    }));
+
+
+}
+
+async function createCode(grade) {
+    config.log(`in create code`);
+    let date = dateConverter.getLiveDate();
+
+    let konkurYear = Number(date.substring(0, 4));
+
+    let isFirst3Month = date.substring(5, 7) <= 3;
+
+    switch (grade) {
+
+        case 'دوازدهم':
+            if (isFirst3Month) {}
+            else konkurYear += 1;
+            break;
+
+        case 'یازدهم':
+            if (isFirst3Month) konkurYear += 1;
+            else konkurYear += 2;
+            break;
+
+        case 'دهم':
+            if (isFirst3Month) konkurYear += 2;
+            else konkurYear += 3;
+            break;
+
+        case 'نهم':
+            if (isFirst3Month) konkurYear += 3;
+            else konkurYear += 4;
+            break;
+
+        case 'هشتم':
+            if (isFirst3Month) konkurYear += 4;
+            else konkurYear += 5;
+            break;
+
+        case 'هفتم':
+            if (isFirst3Month) konkurYear += 5;
+            else konkurYear += 6;
+            break;
+
+        case 'ششم':
+            if (isFirst3Month) konkurYear += 6;
+            else konkurYear += 7;
+            break;
+    }
+
+    config.log(`konkurYear : ${konkurYear}`);
+
+    let latestCode = 0;
+
+    let issue = false;
+
+    // latest added student that its code contains konkurYear
+    await Student.findOne({ "code": { "$regex": konkurYear, "$options": "i" } }, { code:1, _id:0 }, { sort: { 'created' : -1 } },
+        function(err, student) {
+
+        config.log(`finding latest added student`);
+
+        if (err) {
+            issue = true;
+            errHandler(err);
+
+        } else if (student) { // if found student
+            latestCode = Number(student.code);
+
+        } else { // if found no student was found -> handling first student with chosen grade
+            latestCode = konkurYear + 1000;
         }
     });
 
     if (issue) return;
 
-    newStudent._id = new mongoose.Types.ObjectId();
-    newStudent.code = params.code;
-    newStudent.firstName = params.firstName;
-    newStudent.lastName = params.lastName;
-    newStudent.grade = params.grade;
-    newStudent.field = params.field;
-    newStudent.phone = params.phone;
-    newStudent.home = params.home;
-    newStudent.school = params.school;
-
-    // check if inviterCode is valid
-    if (params.inviterCode) {
-
-        // finding inviter
-        await Student.findOne({ code: Number(params.inviterCode) }, function(err, student) {
-
-            if (err) {
-                issue = true;
-                errHandler(err, res);
-
-            } else if (!student) { // if found no inviter
-
-                issue = true;
-                res.status(consts.BAD_REQ_CODE)
-                    .json({
-                        error: consts.INCORRECT_INVITER_ID
-                    });
-
-            } else { // if inviterCode is valid
-
-                // defining inviter for newStudent
-                newStudent.inviter = student._id;
-
-                // adding ref to inviter
-                student.inviteds.push(newStudent);
-
-                // saving inviter
-                student.save((err => {
-
-                    if (err) {
-                        issue = true;
-                        errHandler(err, res);
-                    }
-                }));
-            }
-        });
-    }
-
-    if (issue) return;
-
-    await newStudent.save((err => {
-        if (err) {
-            issue = true;
-            errHandler(err, res);
-            config.log(`error at saving new student`);
-        }
-    }));
-
-    if (issue) return;
-
-    // send student list
-    getStudentList(req, res, next);
-
-    // update last added student
-    //if student had grade
-    if (newStudent.grade) {
-
-    }
-
-
+    return (latestCode + 1.0); // for fuck sake
 }
 
 async function editStudent(req, res, next) {
@@ -169,7 +234,7 @@ async function editStudent(req, res, next) {
     if (issue) return;
 
     // send student list
-    getStudentList(req, res, next);
+    checkCode(req, res, next);
 
 }
 
@@ -287,7 +352,7 @@ async function deleteStudent(req, res, next) {
     if (issue) return;
 
     // send student list
-    getStudentList(req, res, next);
+    checkCode(req, res, next);
 
 }
 
@@ -414,7 +479,7 @@ async function spendCredit(req, res, next) {
     if (issue) return;
 
     // send student list
-    getStudentList(req, res, next);
+    checkCode(req, res, next);
 
 }
 
@@ -467,4 +532,4 @@ async  function groupCommit(req, res, next) {
 
 
 
-module.exports = {getStudentList, addStudent, editStudent, deleteStudent, getGPList, spendCredit, groupCommit};
+module.exports = {getStudentList: checkCode, addStudent: register, editStudent, deleteStudent, getGPList, spendCredit, groupCommit};

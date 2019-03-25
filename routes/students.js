@@ -11,8 +11,6 @@ const studentHandler = require('../utils/studentHandler');
 const purchaseHandler = require('../utils/purchaseHandler');
 const giftHandler = require('../utils/giftHandler');
 
-const secret = 'mysecretboozboozak';
-
 // Bring in Models
 let User = require('../models/user');
 let Student = require('../models/student');
@@ -48,7 +46,7 @@ router.post('/authenticate', (req, res) => {
 
                     // Issue token
                     const payload = { username: username };
-                    const token = jwt.sign(payload, secret, {
+                    const token = jwt.sign(payload, config.jwtSecret, {
                         expiresIn: '5h'
                     });
 
@@ -75,6 +73,10 @@ router.post('/authenticate', (req, res) => {
 
 });
 
+router.post('/checkToken', withAuth, function(req, res) {
+
+    res.sendStatus(consts.SUCCESS_CODE);
+});
 
 router.post('/logout', (req, res)=>{
     const token = jwt.sign({username:"unknown"},"something",{expiresIn:'1s'});
@@ -86,27 +88,22 @@ router.post('/logout', (req, res)=>{
     }
 });
 
-router.post('/checkToken', withAuth, function(req, res) {
-
-    res.sendStatus(consts.SUCCESS_CODE);
-});
-
-router.post('/getStudentList', withAuth, studentHandler.getStudentList);
-router.post('/addStudent', withAuth, studentHandler.addStudent);
-router.post('/editStudent', withAuth, studentHandler.editStudent);
-router.post('/deleteStudent', withAuth, studentHandler.deleteStudent);
-
-router.post('/commitPurchase', withAuth, purchaseHandler.commitPurchase, studentHandler.getStudentList);
-router.post('/commitGift', withAuth, giftHandler.commitGift, studentHandler.getStudentList);
-
-router.post('/getGPList', withAuth, studentHandler.getGPList);
-
-router.post('/spendCredit', withAuth, studentHandler.spendCredit);
-
-router.post('/groupCommit', withAuth, studentHandler.groupCommit);
 
 
+router.post('/checkCode', studentHandler.getStudentList);
+router.post('/register', studentHandler.addStudent);
 
+// router.post('/editStudent', withAuth, studentHandler.editStudent);
+// router.post('/deleteStudent', withAuth, studentHandler.deleteStudent);
+//
+// router.post('/commitPurchase', withAuth, purchaseHandler.commitPurchase, studentHandler.getStudentList);
+// router.post('/commitGift', withAuth, giftHandler.commitGift, studentHandler.getStudentList);
+//
+// router.post('/getGPList', withAuth, studentHandler.getGPList);
+//
+// router.post('/spendCredit', withAuth, studentHandler.spendCredit);
+//
+// router.post('/groupCommit', withAuth, studentHandler.groupCommit);
 
 
 

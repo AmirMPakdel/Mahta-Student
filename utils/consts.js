@@ -12,6 +12,7 @@ module.exports = {
     GIFT_NOT_ENOUGH : 'هدیه موجود کافی نیست',
 
     MAHTA_CODE_EXISTS : 'کد مهتا تکراری',
+    STUDENT_ALREADY_REGISTERED : 'کد قبلا ثبت شده است',
     GP_NOT_FOUND : 'خرید یا هدیه ای وجود ندارد',
 
 

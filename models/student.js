@@ -5,7 +5,7 @@ let moment = require('moment-timezone');
 let studentSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
     code:{
-        type: Number,
+        type: String,
         required: true,
         unique: true,
         dropDups: true,
@@ -16,8 +16,8 @@ let studentSchema = mongoose.Schema({
     grade: String,
     field: String,
     school: String,
-    phone: Number,
-    home: Number,
+    phone: String,
+    home: String,
     credit: {
         type: Number,
         default: 0

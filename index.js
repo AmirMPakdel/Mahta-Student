@@ -97,35 +97,9 @@ if (config.isDevelopment) {
 
 
 
-// TODO: comment this if you don't need test samples
-// const faker = require('./tools/faker');
-// faker.insertFakeAdmin();
-// faker.insertFakeStudents();
-
-
-
-
-
-
-// Route Files
 let students = require('./routes/students');
 app.use('/api/student', students);
 
-
-// just for fun :)
-app.get('/api/info', (req, res) => {
-
-    // res.send(req.headers);
-
-    let Student = require('./models/student');
-
-
-    Student.find({}).sort({created: -1}).find(function(err,docs){
-
-        res.send(docs)
-    });
-
-});
 
 
 const port = 4010;
