@@ -1,24 +1,28 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+import { BrowserRouter as Router, Route , Switch, Redirect } from 'react-router-dom';
+import NeedAuth from './auth/NeedAuth';
 import './App.css';
+
+import LoginPage from './pages/Login';
+import HomePage from './pages/Home';
+import SignUpPage from './pages/SignUp';
+import My404Page from './pages/My404Page';
 
 class App extends Component {
   render() {
     return (
       <div className="App">
         <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
+        <Router>
+
+          <Switch>
+            <Route exact path="/" component={NeedAuth(HomePage, null)}/>
+            <Route exact path="/login" component={LoginPage}/>
+            <Route exact path="/signup" component={SignUpPage}/>
+            <Route component={My404Page}/>
+          </Switch>
+          
+        </Router>
         </header>
       </div>
     );
