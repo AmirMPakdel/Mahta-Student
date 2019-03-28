@@ -15,8 +15,8 @@
     .con{
 
         background-color: green;
-        height: 40vh;
-        max-height: 400px;
+        height: 60vh;
+        max-height: 90vw;
         width: 50vw;
         min-width: 250px;
     }

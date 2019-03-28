@@ -1,50 +1,58 @@
 import React, {Component} from "react";
-import './Login.css';
-
-
+import './SignUp.css';
 import Button from '../components/Button';
 import Input from '../components/Input';
 import urls from '../consts/urls';
 import lock from '../assets/svg/lock.svg'
+import SignUpPage1 from "./SignUp1";
 
 
-class LoginPage extends Component{
+class SignUpPage3 extends Component{
     state={errorMassage:""}
 
-    code = "";
     password = "";
+    re_enter = "";
 
     render(){
 
         return(
 
-            <div style={s.con1}>
+            <div className="signup_con">
 
-                <div className="con">
-                    <div style={s.space}/>
-                    <Input height={30} width="80%" placeholder="کد کاربری" onChange={(e)=>{this.code = e.target.value}}/>
-                    <Input height={30} width="80%" placeholder="رمز عبور" type={"password"}onChange={(e)=>{this.password = e.target.value}}/>
-                    <Button height={50} width="60%" onClick={this.authenticate} >ورود</Button>
-                    <div style={s.error}>{this.state.errorMassage}</div>
+                <div className="signup_title_con">ثبت رمزعبور</div>
+
+                <div className="signup_step3_form_con">
+
+                    <Input height={30} width={200} placeholder="رمزعبور"/>
+
+                    <Input height={30} width={200} placeholder="تکرار رمزعبور"/>
+                    
                 </div>
-                <div style={s.signup_txt} onClick={this.signUp}>ورود به بخش ثبت نام</div>
+
+                <Button onClick={this.signup}>ثبت</Button>
+                
 
             </div>
         )
+    }
+
+    signup = ()=>{
+
+        alert(JSON.stringify(SignUpPage1.studentInfo));
     }
 
     authenticate = ()=>{
 
         fetch(urls.authenticate, 
         {method:"POST", 
-        body: JSON.stringify({code:this.code, password:this.password}),
+        body: JSON.stringify({username:this.username, password:this.password}),
         headers: {'Content-Type': 'application/json'},
         credentials: 'include'})
         .then(res => {
 
             if(res.status === 200 ){
 
-                this.props.history.push("/")
+                this.props.history.push("/admin")
 
             }else if(res.status === 500){
 
@@ -69,19 +77,14 @@ class LoginPage extends Component{
             this.setState(newState);
         });
     }
-
-    signUp = ()=>{
-
-        this.props.history.push('/signup/step1');
-    }
 }
 
 const s = {
 
-    con1:{
+    con:{
 
-        height:'95vh',
-        width:'95vw',
+        height:'100%',
+        width:'100%',
         display:'flex',
         flexDirection:'column',
         alignItems:'center',
@@ -89,7 +92,21 @@ const s = {
         backgroundImage: `url(${lock})`,
         backgroundSize:'auto',
         backgroundRepeat: 'no-repeat',
-        backgroundPosition: '50% 50%', 
+        backgroundPosition: '50% 60%', 
+    },
+
+    con2:{
+        
+        display:'flex',
+        opacity:0.85,
+        flexDirection:'column',
+        alignItems:'center',
+        justifyContent:'center',
+        height:440,
+        width:380,
+        borderRadius:12,
+        boxShadow:'4px 4px 4px rgba(0,0,0,0.5)',
+        backgroundColor:'rgb(220,96,36)',
     },
 
     error:{
@@ -103,32 +120,7 @@ const s = {
 
     space:{
         height:30
-    },
-
-    signup_txt:{
-
-        cursor:'pointer',
-        textAlign:'center',
-        fontSize:16,
-        borderStyle:'solid',
-        borderTopWidth:0,
-        borderRightWidth:0,
-        borderLeftWidth:0,
-        borderBottomWidth:1,
-        paddingBottom:2,
-        marginTop:5,
-        color:'white'
-    },
-
-    create:{
-
-        position:'absolute',
-        bottom:5,
-        fontSize:10,
-        fontFamily:'amp',
-        color:'white',
     }
 }
-const create=<div style={s.create}>&emsp;&emsp;&emsp;&emsp;برنامه نویسی و طراحی سایت : امیرمحمد پاکدل  &emsp; | &emsp; برنامه نویس سرور : محمد نوری</div>
 
-export default LoginPage;
+export default SignUpPage3;

@@ -1,6 +1,11 @@
 const urls = {
 
-    authenticate:"/api/admin/authenticate",
+    authenticate:"/api/student/authenticate",
+    signup1:"/api/student/signupFirstStep",
+    signup2:"/api/student/signupLastStep",
+
+
+
     getStudentList:"/api/admin/getStudentList",
     groupCommit:"/api/admin/groupCommit",
     groupGift:"/api/admin/groupgift",

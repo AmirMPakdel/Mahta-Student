@@ -1,29 +1,37 @@
 import React, {Component} from "react";
+import './SignUp.css';
 import Button from '../components/Button';
 import Input from '../components/Input';
 import urls from '../consts/urls';
 import lock from '../assets/svg/lock.svg'
 
 
-class SignUpPage extends Component{
-    state={errorMassage:""}
+class SignUpPage2 extends Component{
 
-    username = "";
-    password = "";
+    state={errorMassage:""}
 
     render(){
 
         return(
 
-            <div style={s.con}>
+            <div className="signup_con">
 
-                <div style={s.con2}>
-                    <div style={s.space}/>
-                    <Input height={30} width="80%" placeholder="نام کاربری" onChange={(e)=>{this.username = e.target.value}}/>
-                    <Input height={30} width="80%" placeholder="رمز عبور" type={"password"}onChange={(e)=>{this.password = e.target.value}}/>
-                    <Button height={50} width="60%" onClick={this.authenticate} >ورود</Button>
-                    <div style={s.error}>{this.state.errorMassage}</div>
+                <div className="signup_title_con">ثبت اطلاعات دانش آموزی</div>
+
+                <div className="signup_form_con">
+
+                    <Input height={30} width={200} placeholder="رشته"/>
+
+                    <Input height={30} width={200} placeholder="پایه"/>
+
+                    <Input height={30} width={200} placeholder="شماره همراه"/>
+
+                    <Input height={30} width={200} placeholder="مدرسه"/>
+                    
                 </div>
+
+                <Button onClick={this.continue}>ادامه</Button>
+                
 
             </div>
         )
@@ -64,6 +72,11 @@ class SignUpPage extends Component{
             newState.errorMassage="خطای اتصال به سرور";
             this.setState(newState);
         });
+    }
+
+    continue=()=>{
+
+        this.props.history.push('/signup/step3');
     }
 }
 
@@ -121,4 +134,4 @@ const s = {
 }
 const create=<div style={s.create}>&emsp;&emsp;&emsp;&emsp;برنامه نویسی و طراحی سایت : امیرمحمد پاکدل  &emsp; | &emsp; برنامه نویس سرور : محمد نوری</div>
 
-export default SignUpPage;
+export default SignUpPage2;

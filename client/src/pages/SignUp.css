@@ -1,0 +1,95 @@
+.signup_con{
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    margin-top: 5vh;
+    margin-bottom: 5vh;
+    opacity: 0.85;
+    border-radius:12px;
+    box-shadow: 4px 4px 4px rgba(0,0,0,0.5);
+}
+
+.signup_title_con{
+
+    
+    height: 50px;
+    width: 100%;
+    background-color: blueviolet;
+    text-align: center;
+}
+
+.signup_form_con{
+
+    display: flex;
+    align-items: center;
+    align-content: space-around;
+    justify-content: center;
+    flex-direction: row-reverse;
+    width: 100%;
+    flex-wrap: wrap;
+    max-width: 720px;
+    background-color: chocolate
+}
+
+.signup_step3_form_con{
+
+    display: flex;
+    align-items: center;
+    align-content: space-around;
+    justify-content: center;
+    flex-direction: column;
+    width: 100%;
+    flex-wrap: wrap;
+    max-width: 720px;
+    background-color: chocolate
+}
+
+@media only screen and (max-width: 600px){
+
+    .signup_con{
+
+        background-color: green;
+        height: auto;
+        min-height: 500px;
+        width: 85vw;
+        min-width: 250px;
+    }
+}
+
+@media only screen and (max-width: 768px) and (min-width: 600px){
+
+    .signup_con{
+
+        background-color: red;
+        height: auto;
+        min-height: 500px;
+        width: 80vw;
+        min-width: 300px;
+    }
+}
+
+@media only screen and (max-width: 1280px) and (min-width: 768px){
+
+    .signup_con{
+
+        background-color: blue;
+        height: auto;
+        min-height: 500px;
+        width: 80vw;
+        min-width: 345px;
+    }
+}
+
+@media only screen and (min-width: 1280px){
+
+    .signup_con{
+
+        background-color: orange;
+        height: auto;
+        min-height: 500px;
+        width: 80vw;
+        min-width: 384px;
+    }
+}
