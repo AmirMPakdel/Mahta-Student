@@ -1,5 +1,6 @@
 .signup_con{
 
+    background-image:linear-gradient(to bottom right, rgb(255, 70, 38), rgb(255, 22, 96));
     display: flex;
     flex-direction: column;
     justify-content: space-around;
@@ -7,16 +8,16 @@
     margin-top: 5vh;
     margin-bottom: 5vh;
     opacity: 0.85;
-    border-radius:12px;
+    border-radius:32px;
     box-shadow: 4px 4px 4px rgba(0,0,0,0.5);
 }
 
 .signup_title_con{
 
-    
+    font-family: 'amp';
+    font-size: 1.2em;
     height: 50px;
     width: 100%;
-    background-color: blueviolet;
     text-align: center;
 }
 
@@ -50,7 +51,6 @@
 
     .signup_con{
 
-        background-color: green;
         height: auto;
         min-height: 500px;
         width: 85vw;
@@ -62,7 +62,6 @@
 
     .signup_con{
 
-        background-color: red;
         height: auto;
         min-height: 500px;
         width: 80vw;
@@ -74,7 +73,6 @@
 
     .signup_con{
 
-        background-color: blue;
         height: auto;
         min-height: 500px;
         width: 80vw;
@@ -86,7 +84,6 @@
 
     .signup_con{
 
-        background-color: orange;
         height: auto;
         min-height: 500px;
         width: 80vw;

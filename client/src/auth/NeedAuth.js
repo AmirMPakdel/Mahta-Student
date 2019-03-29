@@ -35,7 +35,7 @@ function NeedAuth(Comp,prop) {
       })
       .catch(err => {
         console.error(err);
-        this.setState({component:<Redirect to="/auth" />});
+        this.setState({component:<Redirect to="/login" />});
       });
     }
 

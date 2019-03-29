@@ -4,6 +4,7 @@ import './SignUp.css';
 import Button from '../components/Button';
 import Input from '../components/Input';
 import lock from '../assets/svg/lock.svg';
+import Select from 'react-select';
 import YesNoModal from '../components/YesNoModal';
 import SuccessModal from '../components/SuccessModal';
 import ErrorModal from '../components/ErrorModal';
@@ -30,7 +31,7 @@ class SignUpPage1 extends Component{
         return(
 
             <div className="signup_con">
-
+                <div style={s.space}/>
                 <div className="signup_title_con">ثبت نام دانش آموز</div>
 
                 <div className="signup_form_con">
@@ -41,11 +42,14 @@ class SignUpPage1 extends Component{
                     <Input height={30} width={200} placeholder="نام خانوادگی"
                     onChange={(e)=>{SignUpPage1.studentInfo.lastName = e.target.value}}/>
 
-                    <Input height={30} width={200} placeholder="کد هدیه" type="number"
-                    onChange={(e)=>{SignUpPage1.studentInfo.code = e.target.value}}/>
+                    <Select options={fieldOptions} styles={customStyles} 
+                    placeholder="رشته" onChange={(e)=>{this.studentInfo.field = e.value}}/>
                     
-                    <Input height={30} width={200} placeholder="کد دعوت کننده" type="number"
-                    onChange={(e)=>{SignUpPage1.studentInfo.inviterCode = e.target.value}}/>
+                    <Select options={gradeOptions} styles={customStyles} 
+                    placeholder="پایه" onChange={(e)=>{this.studentInfo.grade = e.value}}/>
+
+                    <Input height={30} width={200} placeholder="شماره همراه" type="number"
+                    onChange={(e)=>{SignUpPage1.studentInfo.code = e.target.value}}/>
                     
                 </div>
 
@@ -113,7 +117,7 @@ const s = {
     },
 
     space:{
-        height:30
+        height:20
     },
 
     create:{
@@ -125,6 +129,60 @@ const s = {
         color:'white',
     }
 }
+
+const customStyles = {
+
+    option: (provided, state) => ({
+        ...provided,
+        borderBottom: '1px dotted pink',
+        color: state.isSelected ? 'red' : 'blue',
+        padding: 20,
+        fontFamily:"amp",
+      }),
+      control: () => ({
+        // none of react-select's styles are passed to <Control />
+        width: 182,
+        marginTop:15,
+        marginBottom:15,
+        marginRight:28,
+        marginLeft:28, 
+        height:40,
+        display:'flex',
+        flexDirection:'row',
+        borderStyle:"solid",
+        borderRadius:5,
+        borderWidth:2,
+        paddingLeft:20,
+        paddingRight:10,
+        fontFamily:"amp",
+        borderColor:'white',
+        backgroundColor:'white'
+      }),
+      singleValue: (provided, state) => {
+        const opacity = state.isDisabled ? 0.5 : 1;
+        const transition = 'opacity 300ms';
+    
+        return { ...provided, opacity, transition };
+      }
+}
+
+const gradeOptions=[
+    {value:"هفتم", label:"هفتم"},
+    {value:"هشتم", label:"هشتم"},
+    {value:"نهم", label:"نهم"},
+    {value:"دهم", label:"دهم"},
+    {value:"یازدهم", label:"یازدهم"},
+    {value:"دوازدهم", label:"دوازدهم"},
+    {value:"فارغ التحصیل", label:"فارغ التحصیل"}
+]
+
+const fieldOptions=[
+    {value:"ریاضی", label:"ریاضی"},
+    {value:"تجربی", label:"تجربی"},
+    {value:"هنر", label:"هنر"},
+    {value:"انسانی", label:"انسانی"},
+]
+
 const create=<div style={s.create}>&emsp;&emsp;&emsp;&emsp;برنامه نویسی و طراحی سایت : امیرمحمد پاکدل  &emsp; | &emsp; برنامه نویس سرور : محمد نوری</div>
 
 export default SignUpPage1;

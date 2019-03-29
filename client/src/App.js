@@ -7,7 +7,6 @@ import LoginPage from './pages/Login';
 import HomePage from './pages/Home';
 import SignUpPage1 from './pages/SignUp1';
 import SignUpPage2 from './pages/SignUp2';
-import SignUpPage3 from './pages/SignUp3';
 import My404Page from './pages/My404Page';
 
 class App extends Component {
@@ -22,7 +21,6 @@ class App extends Component {
             <Route exact path="/login" component={LoginPage}/>
             <Route exact path="/signup/step1" component={SignUpPage1}/>
             <Route exact path="/signup/step2" component={SignUpPage2}/>
-            <Route exact path="/signup/step3" component={SignUpPage3}/>
             <Route component={My404Page}/>
           </Switch>
           

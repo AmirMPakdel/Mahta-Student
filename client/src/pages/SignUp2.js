@@ -16,67 +16,27 @@ class SignUpPage2 extends Component{
 
             <div className="signup_con">
 
-                <div className="signup_title_con">ثبت اطلاعات دانش آموزی</div>
+                <div className="signup_title_con">ثبت معرف دانش آموز</div>
 
-                <div className="signup_form_con">
+                <div style={s.space}/>
+                <div style={s.con1}>
+                    <div className="signup_form_con">
+                        <Input height={30} width={200} placeholder="کد معرف"/>
+                    </div>
+                    <div style={s.space}/>
 
-                    <Input height={30} width={200} placeholder="رشته"/>
-
-                    <Input height={30} width={200} placeholder="پایه"/>
-
-                    <Input height={30} width={200} placeholder="شماره همراه"/>
-
-                    <Input height={30} width={200} placeholder="مدرسه"/>
-                    
+                    <div style={s.link_text} onClick={this.signUp}>ثبت نام بدون معرف</div>
                 </div>
 
-                <Button onClick={this.continue}>ادامه</Button>
-                
+                <Button onClick={this.continue}>ثبت</Button>
 
             </div>
         )
     }
 
-    authenticate = ()=>{
-
-        fetch(urls.authenticate, 
-        {method:"POST", 
-        body: JSON.stringify({username:this.username, password:this.password}),
-        headers: {'Content-Type': 'application/json'},
-        credentials: 'include'})
-        .then(res => {
-
-            if(res.status === 200 ){
-
-                this.props.history.push("/admin")
-
-            }else if(res.status === 500){
-
-                let newState=Object.assign({}, this.state);
-                    newState.errorMassage="خطای اختلال در سرور";
-                    this.setState(newState);
-
-            }else{
-
-                res.json().then(res=>{
-
-                    let newState=Object.assign({}, this.state);
-                    newState.errorMassage=res.error;
-                    this.setState(newState);
-                });
-            }
-        })
-        .catch(err => {
-            
-            let newState=Object.assign({}, this.state);
-            newState.errorMassage="خطای اتصال به سرور";
-            this.setState(newState);
-        });
-    }
-
     continue=()=>{
 
-        this.props.history.push('/signup/step3');
+        this.props.history.push('/');
     }
 }
 
@@ -94,6 +54,14 @@ const s = {
         backgroundSize:'auto',
         backgroundRepeat: 'no-repeat',
         backgroundPosition: '50% 60%', 
+    },
+
+    con1:{
+
+        display:'flex',
+        flexDirection:'column',
+        alignItems:'center',
+        //backgroundColor:'red',
     },
 
     con2:{
@@ -120,7 +88,23 @@ const s = {
     },
 
     space:{
-        height:30
+        height:20
+    },
+
+    link_text:{
+
+        cursor:'pointer',
+        fontFamily:'amp',
+        textAlign:'center',
+        fontSize:16,
+        borderStyle:'solid',
+        borderTopWidth:0,
+        borderRightWidth:0,
+        borderLeftWidth:0,
+        borderBottomWidth:1,
+        paddingBottom:2,
+        marginTop:5,
+        color:'white'
     },
 
     create:{

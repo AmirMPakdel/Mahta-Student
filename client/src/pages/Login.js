@@ -1,33 +1,34 @@
 import React, {Component} from "react";
 import './Login.css';
 
-
 import Button from '../components/Button';
 import Input from '../components/Input';
 import urls from '../consts/urls';
-import lock from '../assets/svg/lock.svg'
+import lock from '../assets/svg/lock.svg';
 
 
 class LoginPage extends Component{
     state={errorMassage:""}
 
     code = "";
-    password = "";
 
     render(){
 
         return(
-
+            
             <div style={s.con1}>
 
                 <div className="con">
                     <div style={s.space}/>
-                    <Input height={30} width="80%" placeholder="کد کاربری" onChange={(e)=>{this.code = e.target.value}}/>
-                    <Input height={30} width="80%" placeholder="رمز عبور" type={"password"}onChange={(e)=>{this.password = e.target.value}}/>
+                    <div unselectable style={s.title}>سامانه مهتا</div>
+                    <div style={s.space}/>
+                    <Input height={30} width="80%" placeholder="کد دانش آموزی" onChange={(e)=>{this.code = e.target.value}}/>
+                    <div style={s.space}/>
                     <Button height={50} width="60%" onClick={this.authenticate} >ورود</Button>
                     <div style={s.error}>{this.state.errorMassage}</div>
+                    <div style={s.miniSpace}/>
+                    <div style={s.signup_txt} onClick={this.signUp}>ورود به بخش ثبت نام</div>
                 </div>
-                <div style={s.signup_txt} onClick={this.signUp}>ورود به بخش ثبت نام</div>
 
             </div>
         )
@@ -70,6 +71,7 @@ class LoginPage extends Component{
         });
     }
 
+
     signUp = ()=>{
 
         this.props.history.push('/signup/step1');
@@ -86,10 +88,18 @@ const s = {
         flexDirection:'column',
         alignItems:'center',
         justifyContent:'center',
-        backgroundImage: `url(${lock})`,
-        backgroundSize:'auto',
-        backgroundRepeat: 'no-repeat',
-        backgroundPosition: '50% 50%', 
+        //backgroundImage: `url(${lock})`,
+        //backgroundSize:'auto',
+        //backgroundRepeat: 'no-repeat',
+        //backgroundPosition: '50% 50%', 
+    },
+
+    title:{
+
+        textAlign:'center',
+        fontSize:'2.2em',
+        userSelect: 'none',
+        fontFamily:'ebhar',
     },
 
     error:{
@@ -97,17 +107,22 @@ const s = {
         height:20,
         fontFamily:'amp',
         fontSize:16,
-        color:'rgb(198, 15, 34)',
+        color:'#ff8935',
         textAlign:'center'
     },
 
     space:{
-        height:30
+        height:20
+    },
+
+    miniSpace:{
+        height:6,
     },
 
     signup_txt:{
 
         cursor:'pointer',
+        fontFamily:'amp',
         textAlign:'center',
         fontSize:16,
         borderStyle:'solid',
