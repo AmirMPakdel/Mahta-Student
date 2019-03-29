@@ -18,7 +18,7 @@ let Student = require('../models/student');
 // authenticate process
 router.post('/authenticate', (req, res) => {
 
-    const { code, password } = req.body;
+    const { code } = req.body;
 
     Student.findOne({ code }, function(err, student) {
 
@@ -31,9 +31,9 @@ router.post('/authenticate', (req, res) => {
                 .json({
                     error: consts.INCORRECT_MAHTA_ID
                 });
-        } else { // if found student
 
-            if (student.password === password) {
+        } else if (student) { // if found student
+
 
             // Match password
             // bcrypt.compare(password, student.password, (err, isMatch) => {
@@ -66,7 +66,7 @@ router.post('/authenticate', (req, res) => {
                 }
             // });
 
-        }
+
     });
 
 });
@@ -91,18 +91,10 @@ router.post('/logout', (req, res)=>{
 router.post('/checkCode', studentHandler.checkCode);
 router.post('/register', studentHandler.register);
 
-// router.post('/editStudent', withAuth, studentHandler.editStudent);
-// router.post('/deleteStudent', withAuth, studentHandler.deleteStudent);
-//
 // router.post('/commitPurchase', withAuth, purchaseHandler.commitPurchase, studentHandler.getStudentList);
 // router.post('/commitGift', withAuth, giftHandler.commitGift, studentHandler.getStudentList);
 //
 // router.post('/getGPList', withAuth, studentHandler.getGPList);
-//
-// router.post('/spendCredit', withAuth, studentHandler.spendCredit);
-//
-// router.post('/groupCommit', withAuth, studentHandler.groupCommit);
-
 
 
 

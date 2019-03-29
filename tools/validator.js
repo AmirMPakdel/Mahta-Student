@@ -2,7 +2,7 @@ const consts = require('../utils/consts');
 
 function hasCode(req, res, params) {
 
-    if (!params.code) {
+    if (!params.code || params.code === undefined) {
         res.status(consts.BAD_REQ_CODE)
             .json({
                 error: consts.INCORRECT_PARAMS
