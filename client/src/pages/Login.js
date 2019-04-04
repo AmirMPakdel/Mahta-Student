@@ -4,7 +4,7 @@ import './Login.css';
 import Button from '../components/Button';
 import Input from '../components/Input';
 import urls from '../consts/urls';
-import lock from '../assets/svg/lock.svg';
+import LoginHandler from '../handlers/LoginHandler';
 
 
 class LoginPage extends Component{
@@ -27,54 +27,34 @@ class LoginPage extends Component{
                     <Button height={50} width="60%" onClick={this.authenticate} >ورود</Button>
                     <div style={s.error}>{this.state.errorMassage}</div>
                     <div style={s.miniSpace}/>
-                    <div style={s.signup_txt} onClick={this.signUp}>ورود به بخش ثبت نام</div>
+                    <div className="signup_link" onClick={this.signUp}>ورود به بخش ثبت نام</div>
+                    <div style={s.miniSpace}/>
                 </div>
 
             </div>
         )
     }
 
-    authenticate = ()=>{
-
-        fetch(urls.authenticate, 
-        {method:"POST", 
-        body: JSON.stringify({code:this.code, password:this.password}),
-        headers: {'Content-Type': 'application/json'},
-        credentials: 'include'})
-        .then(res => {
-
-            if(res.status === 200 ){
-
-                this.props.history.push("/")
-
-            }else if(res.status === 500){
-
-                let newState=Object.assign({}, this.state);
-                    newState.errorMassage="خطای اختلال در سرور";
-                    this.setState(newState);
-
-            }else{
-
-                res.json().then(res=>{
-
-                    let newState=Object.assign({}, this.state);
-                    newState.errorMassage=res.error;
-                    this.setState(newState);
-                });
-            }
-        })
-        .catch(err => {
-            
-            let newState=Object.assign({}, this.state);
-            newState.errorMassage="خطای اتصال به سرور";
-            this.setState(newState);
-        });
-    }
-
-
     signUp = ()=>{
 
-        this.props.history.push('/signup/step1');
+        LoginHandler({code:this.code}, (res)=>{
+
+            if(res.registered){
+
+                this.props.history.push("/");
+            
+            }else{
+
+                this.props.history.push("/signup/step1");
+            }
+
+        }, (err)=>{
+
+            let newState=Object.assign({}, this.state);
+            newState.errorMassage = err;
+            this.setState(newState);
+
+        });
     }
 }
 
@@ -87,11 +67,7 @@ const s = {
         display:'flex',
         flexDirection:'column',
         alignItems:'center',
-        justifyContent:'center',
-        //backgroundImage: `url(${lock})`,
-        //backgroundSize:'auto',
-        //backgroundRepeat: 'no-repeat',
-        //backgroundPosition: '50% 50%', 
+        justifyContent:'center'
     },
 
     title:{
@@ -117,22 +93,6 @@ const s = {
 
     miniSpace:{
         height:6,
-    },
-
-    signup_txt:{
-
-        cursor:'pointer',
-        fontFamily:'amp',
-        textAlign:'center',
-        fontSize:16,
-        borderStyle:'solid',
-        borderTopWidth:0,
-        borderRightWidth:0,
-        borderLeftWidth:0,
-        borderBottomWidth:1,
-        paddingBottom:2,
-        marginTop:5,
-        color:'white'
     },
 
     create:{

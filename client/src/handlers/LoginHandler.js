@@ -1,8 +1,8 @@
 import urls from '../consts/urls';
 
-const AddStudentHandler = (json, onFetched, onError)=>{
+const LoginHandler = (json, onFetched, onError)=>{
 
-    fetch(urls.addStudent, {
+    fetch(urls.authenticate, {
         method:"POST",
         body: JSON.stringify(json),
         headers: {'Content-Type': 'application/json'},
@@ -13,11 +13,11 @@ const AddStudentHandler = (json, onFetched, onError)=>{
             if(res.status === 200){
                 
                 res.json().then(res=> onFetched(res))
-                .catch(err=>{ onFetched(res) });
+                .catch(err=>{ alert(err); onFetched(res) });
             
             }else if(res.status === 500){
 
-                onError("خطای حاصل از نقص سرور")
+                onError("خطای حاصل از نقص سرور");
 
             }else{
 
@@ -30,4 +30,4 @@ const AddStudentHandler = (json, onFetched, onError)=>{
         });
 }
 
-export default AddStudentHandler;
+export default LoginHandler;

@@ -5,26 +5,27 @@ import Button from '../components/Button';
 import Input from '../components/Input';
 import lock from '../assets/svg/lock.svg';
 import Select from 'react-select';
-import YesNoModal from '../components/YesNoModal';
 import SuccessModal from '../components/SuccessModal';
 import ErrorModal from '../components/ErrorModal';
+
+const emptyStudentInfo = {
+
+    code:0,
+    inviterCode:0,
+    password:"",
+    firstName:"",
+    lastName:"",
+    field:"",
+    grade:"",
+    phone:"",
+    school:""
+}
 
 class SignUpPage1 extends Component{
     state={askModal:false, errorModal:false, successModal:false,
         data:{firstName:"av"}, shouldValidateInputs:true}
 
-    static studentInfo = {
-
-        code:0,
-        inviterCode:0,
-        password:"",
-        firstName:"",
-        lastName:"",
-        field:"",
-        grade:"",
-        phone:"",
-        school:""
-    }
+    static studentInfo = emptyStudentInfo;
 
     render(){
 
@@ -34,6 +35,7 @@ class SignUpPage1 extends Component{
                 <div style={s.space}/>
                 <div className="signup_title_con">ثبت نام دانش آموز</div>
 
+                <div style={s.miniSpace}/>
                 <div className="signup_form_con">
 
                     <Input height={30} width={200} placeholder="نام"
@@ -43,29 +45,31 @@ class SignUpPage1 extends Component{
                     onChange={(e)=>{SignUpPage1.studentInfo.lastName = e.target.value}}/>
 
                     <Select options={fieldOptions} styles={customStyles} 
-                    placeholder="رشته" onChange={(e)=>{this.studentInfo.field = e.value}}/>
+                    placeholder="رشته" onChange={(e)=>{SignUpPage1.studentInfo.field = e.value}}/>
                     
                     <Select options={gradeOptions} styles={customStyles} 
-                    placeholder="پایه" onChange={(e)=>{this.studentInfo.grade = e.value}}/>
+                    placeholder="پایه" onChange={(e)=>{SignUpPage1.studentInfo.grade = e.value}}/>
 
                     <Input height={30} width={200} placeholder="شماره همراه" type="number"
                     onChange={(e)=>{SignUpPage1.studentInfo.code = e.target.value}}/>
                     
                 </div>
 
-                <Button onClick={this.continue}>ادامه</Button>
+                <div className="signup_space1"/>
 
-                <YesNoModal open={this.state.askModal} commit={this.askModalCommit} cancel={this.askModalClose}>
-                        {this.yesNoDialog}
-                    </YesNoModal>
-                    
-                    <ErrorModal open={this.state.errorModal} onClose={this.errorModalClose}>
-                        {this.modalError}
-                    </ErrorModal>
-                    
-                    <SuccessModal open={this.state.successModal} onClose={this.successModalClose}>
-                        {this.successDialog}
-                    </SuccessModal>
+                <div className="signup_accept">
+                    <Button margin="0%" height="100%" width="100%" onClick={this.continue}>ادامه</Button>
+                </div>
+
+                <div className="signup_space1"/>
+                
+                <ErrorModal open={this.state.errorModal} onClose={this.errorModalClose}>
+                    {this.modalError}
+                </ErrorModal>
+                
+                <SuccessModal open={this.state.successModal} onClose={this.successModalClose}>
+                    {this.successDialog}
+                </SuccessModal>
 
             </div>
         )
@@ -120,6 +124,10 @@ const s = {
         height:20
     },
 
+    miniSpace:{
+        height:10
+    },
+
     create:{
 
         position:'absolute',
@@ -138,6 +146,7 @@ const customStyles = {
         color: state.isSelected ? 'red' : 'blue',
         padding: 20,
         fontFamily:"amp",
+        fontSize:'0.9em',
       }),
       control: () => ({
         // none of react-select's styles are passed to <Control />
@@ -155,6 +164,7 @@ const customStyles = {
         paddingLeft:20,
         paddingRight:10,
         fontFamily:"amp",
+        fontSize:'0.9em',
         borderColor:'white',
         backgroundColor:'white'
       }),

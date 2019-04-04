@@ -11,7 +11,7 @@ class My404Page extends Component {
                 justifyContent:'center',
                 margin:0,
                 width:'80vw',
-                minWidth:800,
+                maxWidth:800,
                 height:85,
                 borderTopLeftRadius:15,
                 borderTopRightRadius:15,
@@ -22,9 +22,9 @@ class My404Page extends Component {
 
                 <div style={s.icon}>
                     <div unselectable style={{fontFamily:'ebhar', color:'white', 
-                    fontSize:55, userSelect: 'none' }}>ادمین&thinsp;</div>
-                    <div unselectable style={{fontFamily:'ebhar', color:'rgb(220,96,36)', 
-                    fontSize:55, userSelect: 'none' }}>مهتا</div>
+                    fontSize:'2.2em', userSelect: 'none' }}>مهتا&thinsp;</div>
+                    <div unselectable style={{fontFamily:'ebhar', color:'rgb(255, 22, 96)', 
+                    fontSize:'2.2em', userSelect: 'none' }}>سامانه</div>
                 </div>
                 </div>
                 
@@ -33,16 +33,18 @@ class My404Page extends Component {
             <div style={{opacity:0.85,
                 display:'flex',
                 height:'78vh',
-                minHeight:440,
+                maxHeight:440,
                 width:'80vw',
-                minWidth:800,
+                maxWidth:800,
                 flexDirection:'column',
                 alignItems:'center',
-                justifyContent:'space-around',
+                justifyContent:'center',
                 borderBottomLeftRadius:15,
                 borderBottomRightRadius:15,
-                backgroundColor:'rgb(216,92,32)'}}>
+                backgroundImage:'linear-gradient(to bottom right, rgb(255, 70, 38), rgb(255, 22, 96))'}}>
 
+                    <div style={s.text}>خطای 404</div>
+                    <br/>
                     <div style={s.text}>!صفحه مورد نظر یافت نشد</div>
 
                 </div>
@@ -63,7 +65,7 @@ const s ={
     text:{
         color:'white',
         fontFamily:'amp',
-        fontSize:30
+        fontSize:'1.5em'
     },
 
     icon:{

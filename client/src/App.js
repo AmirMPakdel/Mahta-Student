@@ -17,7 +17,7 @@ class App extends Component {
         <Router>
 
           <Switch>
-            <Route exact path="/" component={NeedAuth(HomePage, null)}/>
+            <Route exact path="/" component={HomePage}/>
             <Route exact path="/login" component={LoginPage}/>
             <Route exact path="/signup/step1" component={SignUpPage1}/>
             <Route exact path="/signup/step2" component={SignUpPage2}/>

@@ -4,11 +4,13 @@ import Button from '../components/Button';
 import Input from '../components/Input';
 import urls from '../consts/urls';
 import lock from '../assets/svg/lock.svg'
+import SuccessModal from '../components/SuccessModal';
+import ErrorModal from '../components/ErrorModal';
 
 
 class SignUpPage2 extends Component{
 
-    state={errorMassage:""}
+    state={errorModal:false, successModal:false}
 
     render(){
 
@@ -16,9 +18,11 @@ class SignUpPage2 extends Component{
 
             <div className="signup_con">
 
-                <div className="signup_title_con">ثبت معرف دانش آموز</div>
+                <div style={{height:1}}/>
+                    <div className="signup_title_con">ثبت معرف دانش آموز</div>
+                <div style={s.miniSpace}/>
+                
 
-                <div style={s.space}/>
                 <div style={s.con1}>
                     <div className="signup_form_con">
                         <Input height={30} width={200} placeholder="کد معرف"/>
@@ -28,7 +32,21 @@ class SignUpPage2 extends Component{
                     <div style={s.link_text} onClick={this.signUp}>ثبت نام بدون معرف</div>
                 </div>
 
-                <Button onClick={this.continue}>ثبت</Button>
+                <div className="signup_space1"/>
+
+                <div className="signup_accept">
+                    <Button margin="0%" height="100%" width="100%" onClick={this.continue}>ثبت</Button>
+                </div>
+
+                <div className="signup_space1"/>
+
+                <ErrorModal open={this.state.errorModal} onClose={this.errorModalClose}>
+                    {this.modalError}
+                </ErrorModal>
+                
+                <SuccessModal open={this.state.successModal} onClose={this.successModalClose}>
+                    {this.successDialog}
+                </SuccessModal>
 
             </div>
         )
@@ -89,6 +107,10 @@ const s = {
 
     space:{
         height:20
+    },
+
+    miniSpace:{
+        height:10
     },
 
     link_text:{

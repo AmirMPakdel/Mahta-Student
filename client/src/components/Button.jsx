@@ -10,18 +10,21 @@ class Button extends Component {
             return(
                 <button style={{height:this.props.height, 
                     width:this.props.width, 
-                    margin:15,
+                    margin: this.props.margin || 15,
                     fontFamily:'amp',
                     fontWeight:'bold', 
-                    fontSize:24, 
-                    padding:'5px 15px',
+                    fontSize: this.props.fontSize || "1em", 
+                    paddingBottom:6,
+                    paddingTop:4,
+                    paddingLeft:15,
+                    paddingRight:15,
                     borderRadius:4, 
                     borderWidth:0,
                     boxShadow:'4px 4px 4px rgba(0,0,0,0.5)', 
                     backgroundColor:'rgba(255,255,255,0.9)',
                     borderColor:'rgba(255,255,255,0.9)', 
                     cursor:'pointer',
-                    color:this.props.fontColor || 'rgb(65,76,82)'}} 
+                    color:this.props.fontColor || 'rgb(212,20,50)'}} 
                 onClick={this.props.onClick}>
                     {this.props.children}
                 </button>

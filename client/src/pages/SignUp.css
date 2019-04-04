@@ -15,7 +15,6 @@
 .signup_title_con{
 
     font-family: 'amp';
-    font-size: 1.2em;
     height: 50px;
     width: 100%;
     text-align: center;
@@ -31,7 +30,6 @@
     width: 100%;
     flex-wrap: wrap;
     max-width: 720px;
-    background-color: chocolate
 }
 
 .signup_step3_form_con{
@@ -44,10 +42,13 @@
     width: 100%;
     flex-wrap: wrap;
     max-width: 720px;
-    background-color: chocolate
 }
 
 @media only screen and (max-width: 600px){
+
+    .signup_title_con{
+        font-size: 1.3em;
+    }
 
     .signup_con{
 
@@ -56,10 +57,21 @@
         width: 85vw;
         min-width: 250px;
     }
+    .signup_space1{
+        height: 5vh;
+    }
+    .signup_accept{
+
+        height: 40px;
+        width: 120px;
+    }
 }
 
-@media only screen and (max-width: 768px) and (min-width: 600px){
+@media only screen and (max-width: 768px) and (min-width: 601px){
 
+    .signup_title_con{
+        font-size: 25px;
+    }
     .signup_con{
 
         height: auto;
@@ -67,9 +79,25 @@
         width: 80vw;
         min-width: 300px;
     }
+    .signup_space1{
+        height: 5vh;;
+    }
+    .signup_accept{
+
+        height: 45px;
+        width: 135px;
+    }
 }
 
-@media only screen and (max-width: 1280px) and (min-width: 768px){
+@media only screen and (max-width: 1280px) and (min-width: 769px){
+
+    .signup_title_con{
+        font-size: 28px;
+    }
+
+    .signup_space1{
+        height: 5vh;;
+    }
 
     .signup_con{
 
@@ -78,15 +106,28 @@
         width: 80vw;
         min-width: 345px;
     }
+    .signup_accept{
+
+        height: 50px;
+        width: 180px;
+    }
 }
 
-@media only screen and (min-width: 1280px){
+@media only screen and (min-width: 1281px){
 
+    .signup_title_con{
+        font-size: 30px;
+    }
     .signup_con{
 
         height: auto;
         min-height: 500px;
         width: 80vw;
         min-width: 384px;
+    }
+    .signup_accept{
+
+        height: 50px;
+        width: 180px;
     }
 }
