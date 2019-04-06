@@ -5,25 +5,23 @@ import Button from '../components/Button';
 import Input from '../components/Input';
 import lock from '../assets/svg/lock.svg';
 import Select from 'react-select';
+import {SignUpFirstStep} from '../handlers/SignUpHandler';
 import SuccessModal from '../components/SuccessModal';
 import ErrorModal from '../components/ErrorModal';
 
 const emptyStudentInfo = {
 
-    code:0,
     inviterCode:0,
-    password:"",
     firstName:"",
     lastName:"",
     field:"",
     grade:"",
     phone:"",
-    school:""
 }
 
 class SignUpPage1 extends Component{
     state={askModal:false, errorModal:false, successModal:false,
-        data:{firstName:"av"}, shouldValidateInputs:true}
+        data:{firstName:"av"}, shouldValidateInputs:true, errorMassage:"", code:0}
 
     static studentInfo = emptyStudentInfo;
 
@@ -63,12 +61,22 @@ class SignUpPage1 extends Component{
 
                 <div className="signup_space1"/>
                 
-                <ErrorModal open={this.state.errorModal} onClose={this.errorModalClose}>
-                    {this.modalError}
+                <ErrorModal open={this.state.errorModal} onClose={this.closeErrorModal}>
+                    خطا
+                    <br/>
+                    <br/>
+                    {this.state.errorMassage}
+                    <br/>
                 </ErrorModal>
                 
-                <SuccessModal open={this.state.successModal} onClose={this.successModalClose}>
-                    {this.successDialog}
+                <SuccessModal open={this.state.successModal} onClose={this.closeSuccessModal}>
+                    <div style={{fontSize:'1.6em', color:'#ff2'}}>{126224}</div>
+                    <br/>
+                   این کد دانش آموزیته. باهاش میتونی از هدایا و اعتبارت استفاده کنی و وارد سامانه بشی
+                    <br/>
+                    <br/>
+                    {"; ) یاداشتش کن حتما"}    
+                    <br/>
                 </SuccessModal>
 
             </div>
@@ -77,7 +85,47 @@ class SignUpPage1 extends Component{
 
     continue=()=>{
 
-        this.props.history.push('/signup/step2');
+        SignUpFirstStep(SignUpPage1.studentInfo, (res)=>{
+
+            this.openSuccessModal(res.code);
+
+        }, (err)=>{
+
+            this.openErrorModal(err);
+        })
+        
+    }
+
+    openSuccessModal = (code)=>{
+
+        let newState = Object.assign({}, this.state);
+        newState.successModal = true;
+        newState.code = code;
+        this.setState(newState);
+    }
+
+    openErrorModal = (err)=>{
+
+        let newState = Object.assign({}, this.state);
+        newState.errorModal = true;
+        newState.errorMassage = err;
+        this.setState(newState);
+    }
+
+    closeSuccessModal = ()=>{
+
+        let newState = Object.assign({}, this.state);
+        newState.successModal = false;
+        this.setState(newState);
+
+        this.props.history.push('/signup/step2')
+    }
+
+    closeErrorModal = ()=>{
+
+        let newState = Object.assign({}, this.state);
+        newState.errorModal = false;
+        this.setState(newState);
     }
 }
 

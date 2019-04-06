@@ -24,7 +24,7 @@ class LoginPage extends Component{
                     <div style={s.space}/>
                     <Input height={30} width="80%" placeholder="کد دانش آموزی" onChange={(e)=>{this.code = e.target.value}}/>
                     <div style={s.space}/>
-                    <Button height={50} width="60%" onClick={this.authenticate} >ورود</Button>
+                    <Button height={50} width="60%" onClick={this.login} >ورود</Button>
                     <div style={s.error}>{this.state.errorMassage}</div>
                     <div style={s.miniSpace}/>
                     <div className="signup_link" onClick={this.signUp}>ورود به بخش ثبت نام</div>
@@ -35,7 +35,7 @@ class LoginPage extends Component{
         )
     }
 
-    signUp = ()=>{
+    login = ()=>{
 
         LoginHandler({code:this.code}, (res)=>{
 
@@ -53,8 +53,12 @@ class LoginPage extends Component{
             let newState=Object.assign({}, this.state);
             newState.errorMassage = err;
             this.setState(newState);
-
         });
+    }
+
+    signUp = ()=>{
+
+        this.props.history.push("/signup/step1");
     }
 }
 

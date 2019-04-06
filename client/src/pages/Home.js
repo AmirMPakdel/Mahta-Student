@@ -5,13 +5,28 @@ import {showNumber} from '../utils/NumberUtils'
 import gift from '../assets/svg/gift.svg';
 import credit from '../assets/svg/credit.svg';
 import user from '../assets/svg/user.svg';
+import InfoHandler from '../handlers/InfoHandler';
+import CreditListModal from '../components/CreditListModal';
+import InviteListModal from '../components/InviteListModal';
+import GiftListModal from '../components/GiftListModal';
 
 class HomePage extends Component {
 
-    state={gift:0, credit:0, invites:0}
+    state={gift:0, credit:0, invites:0, creditList:false, inviteList:false, giftList:false}
+
+    static Info = {};
+
     componentDidMount(){
 
-        setTimeout(this.numbersAnim,1);
+        InfoHandler((res)=>{
+
+            HomePage.Info = res;
+            setTimeout(this.numbersAnim,400);
+
+        }, err=>{
+
+            alert(err);
+        })
     }
 
     render() { 
@@ -21,7 +36,7 @@ class HomePage extends Component {
                     <div className="home_header">
                         
                         <div className="exit_btn">
-                            <Button fontSize="0.8em" height="100%" width="100%">خروج</Button>
+                            <Button fontSize="0.8em" height="100%" width="100%" onClick={this.logout}>خروج</Button>
                         </div>
                         <div style={s.bigSpace}/>
                         <div className="home_ictxt">سامانه مهتا</div>
@@ -38,30 +53,30 @@ class HomePage extends Component {
                 <div className="con4">
 
                     <div className="home_sec2">
-                        <img className="home_svg_icon" src={credit}/>
+                        <img onClick={this.openCreditList} className="home_svg_icon" src={credit}/>
                     </div>
                     <div className="home_sec2">
-                        <img className="home_svg_icon" src={user}/>
+                        <img onClick={this.openInviteList} className="home_svg_icon" src={user}/>
                     </div>
                     <div className="home_sec2">
-                        <img className="home_svg_icon" src={gift}/>
+                        <img onClick={this.openGiftList} className="home_svg_icon" src={gift}/>
                     </div>
 
                 </div>
 
                 <div className="con2">
 
-                    <div className="home_sec1">
+                    <div className="home_sec1" onClick={this.openCreditList}>
                         <div className="home_num1">{showNumber(this.state.credit)}</div>
                         <div className="home_line1"/>
                         <div className="home_txt1">مقدار اعتبار</div>
                     </div>
-                    <div className="home_sec1">
+                    <div className="home_sec1" onClick={this.openInviteList}>
                         <div className="home_num1">{showNumber(this.state.invites)}</div>
                         <div className="home_line1"/>
                         <div className="home_txt1">تعداد دعوت</div>
                     </div>
-                    <div className="home_sec1">
+                    <div className="home_sec1" onClick={this.openGiftList}>
                         <div className="home_num1">{showNumber(this.state.gift)}</div>
                         <div className="home_line1"/>
                         <div className="home_txt1">مقدار هدیه</div>
@@ -70,14 +85,23 @@ class HomePage extends Component {
                 <div className="con3">
 
                 </div>
+                
+                <CreditListModal open={this.state.creditList} onClose={this.closeCreditList}/>
+                <InviteListModal open={this.state.inviteList} onClose={this.closeInviteList}/>
+                <GiftListModal open={this.state.giftList} onClose={this.closeGiftList}/>
+
             </div>
          );
     }
 
+    logout = ()=>{
+
+    }
+
     numbersAnim=()=>{
-        let credit = 50;
-        let invites = 20;
-        let gift = 2;
+        let credit = HomePage.Info.credit || 0;
+        let invites = HomePage.Info.invites || 0;
+        let gift = HomePage.Info.gift || 0;
 
         
         let credit_int = Number.parseInt(credit/803);
@@ -139,6 +163,49 @@ class HomePage extends Component {
             }
         },2)
     }
+
+    openCreditList = ()=>{
+
+        let newState = Object.assign({},this.state);
+        newState.creditList = true;
+        this.setState(newState);
+    }
+
+    closeCreditList = ()=>{
+
+        let newState = Object.assign({},this.state);
+        newState.creditList = false;
+        this.setState(newState);
+    }
+
+    openInviteList = ()=>{
+
+        let newState = Object.assign({},this.state);
+        newState.inviteList = true;
+        this.setState(newState);
+    }
+
+    closeInviteList = ()=>{
+
+        let newState = Object.assign({},this.state);
+        newState.inviteList = false;
+        this.setState(newState);
+    }
+
+    openGiftList = ()=>{
+
+        let newState = Object.assign({},this.state);
+        newState.giftList = true;
+        this.setState(newState);
+    }
+
+    closeGiftList = ()=>{
+
+        let newState = Object.assign({},this.state);
+        newState.giftList = false;
+        this.setState(newState);
+    }
+    
 }
 
 const s = {

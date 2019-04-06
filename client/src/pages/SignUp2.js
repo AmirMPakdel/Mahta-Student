@@ -2,15 +2,17 @@ import React, {Component} from "react";
 import './SignUp.css';
 import Button from '../components/Button';
 import Input from '../components/Input';
-import urls from '../consts/urls';
-import lock from '../assets/svg/lock.svg'
+import lock from '../assets/svg/lock.svg';
+import {SignUpLastStep} from '../handlers/SignUpHandler';
 import SuccessModal from '../components/SuccessModal';
 import ErrorModal from '../components/ErrorModal';
 
 
 class SignUpPage2 extends Component{
 
-    state={errorModal:false, successModal:false}
+    state={errorModal:false, successModal:false, inviter:'', errorMassage:''}
+
+    inviterCode = 0;
 
     render(){
 
@@ -25,36 +27,89 @@ class SignUpPage2 extends Component{
 
                 <div style={s.con1}>
                     <div className="signup_form_con">
-                        <Input height={30} width={200} placeholder="کد معرف"/>
+                        <Input height={30} width={200} placeholder="کد معرف" 
+                        onChange={e=>this.inviterCode=Number(e.target.value)}/>
                     </div>
                     <div style={s.space}/>
 
-                    <div style={s.link_text} onClick={this.signUp}>ثبت نام بدون معرف</div>
+                    <div style={s.link_text} onClick={this.continue}>ثبت نام بدون معرف</div>
                 </div>
 
                 <div className="signup_space1"/>
 
                 <div className="signup_accept">
-                    <Button margin="0%" height="100%" width="100%" onClick={this.continue}>ثبت</Button>
+                    <Button margin="0%" height="100%" width="100%" onClick={this.commit}>ثبت</Button>
                 </div>
 
                 <div className="signup_space1"/>
 
-                <ErrorModal open={this.state.errorModal} onClose={this.errorModalClose}>
-                    {this.modalError}
+                <ErrorModal open={this.state.errorModal} onClose={this.closeErrorModal}>
+                    خطا
+                    <br/>
+                    <br/>
+                    {this.state.errorMassage}
+                    <br/>
                 </ErrorModal>
                 
-                <SuccessModal open={this.state.successModal} onClose={this.successModalClose}>
-                    {this.successDialog}
+                <SuccessModal open={this.state.successModal} onClose={this.closeSuccessModal}>
+                    <div style={{fontSize:'1.6em', color:'#ff2'}}>امیرمحمد پاکدل</div>
+                    <br/>
+                    به عنوان کسی که تورو معرفی کرده ثبت شد
+                    <br/>
                 </SuccessModal>
 
             </div>
         )
     }
 
-    continue=()=>{
+    commit=()=>{
+
+        SignUpLastStep({inviterCode:this.inviterCode}, (res)=>{
+
+            this.openSuccessModal(res);
+
+        }, (err)=>{
+
+            this.openErrorModal(err);
+        })
+        
+    }
+
+    continue = ()=>{
 
         this.props.history.push('/');
+    }
+
+    openSuccessModal = (res)=>{
+
+        let newState = Object.assign({}, this.state);
+        newState.successModal = true;
+        newState.inviter = res.lastName+" "+res.firstName;
+        this.setState(newState);
+    }
+
+    openErrorModal = (err)=>{
+
+        let newState = Object.assign({}, this.state);
+        newState.errorModal = true;
+        newState.errorMassage = err;
+        this.setState(newState);
+    }
+
+    closeSuccessModal = ()=>{
+
+        let newState = Object.assign({}, this.state);
+        newState.successModal = false;
+        this.setState(newState);
+
+        this.props.history.push('/')
+    }
+
+    closeErrorModal = ()=>{
+
+        let newState = Object.assign({}, this.state);
+        newState.errorModal = false;
+        this.setState(newState);
     }
 }
 

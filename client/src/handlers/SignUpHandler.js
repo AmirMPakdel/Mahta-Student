@@ -21,7 +21,7 @@ const SignUpFirstStep = (json, onFetched, onError)=>{
             }else{
 
                 res.json().then(res=> onError(res.error))
-                .catch(err=>{ onError(res) });
+                .catch(err=>{ onError("خطای شبکه و اتصال به سرور") });
             }
         }).catch(err=>{
 
@@ -51,7 +51,7 @@ const SignUpLastStep = (json, onFetched, onError)=>{
             }else{
 
                 res.json().then(res=> onError(res.error))
-                .catch(err=>{ onError(res) });
+                .catch(err=>{ onError("خطای شبکه و اتصال به سرور") });
             }
         }).catch(err=>{
 
