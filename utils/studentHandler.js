@@ -40,7 +40,6 @@ async function checkCode(req, res, next) {
                     .json({
                         error: consts.STUDENT_ALREADY_REGISTERED
                     });
-
             }
         } else { // if found no student
 
@@ -57,77 +56,130 @@ async function checkCode(req, res, next) {
 /*
 * registering student
 * */
-async function register(req, res, next) {
+async function signup(req, res, next) {
 
     let params = req.body;
 
-    let issue = validator.hasCode(req, res, params);
-    if (issue) return;
+    let issue = false;
 
-    let query = {
-        code: Number(params.code)
-    };
+    // the student has temp code
+    if(params.code){
 
-    let studentToRegister;
-
-    await Student.findOne(query, function(err, student) {
-
-        config.log(`finding student...`);
-
-        if (err) {
-            errHandler(err, res);
-            issue = true;
-
-        } else if (student) { // if a student was found
-
-            if (!student.firstName && !student.lastName) { // if student wasn't registered before
-
-                config.log(`student wasn't registered`);
-
-                student.firstName = params.firstName;
-                student.lastName = params.lastName;
-                student.field = params.field;
-                student.grade = params.grade;
-                student.school = params.school;
-                student.phone = params.phone;
-                student.home = params.home;
-                student.password = params.password;
-
-                studentToRegister = student;
-
-
-            } else { // if student was registered before
+        let query = {
+            code: Number(params.code)
+        };
+    
+        let studentToRegister;
+    
+        await Student.findOne(query, function(err, student) {
+    
+            config.log(`finding student...`);
+    
+            if (err) {
+                errHandler(err, res);
                 issue = true;
-                res.status(consts.BAD_REQ_CODE)
+    
+            } else if (student) { // if a student was found
+    
+                if (!student.firstName && !student.lastName) { // if student wasn't registered before
+    
+                    config.log(`student wasn't registered`);
+    
+                    student.firstName = params.firstName;
+                    student.lastName = params.lastName;
+                    student.field = params.field;
+                    student.grade = params.grade;
+                    student.phone = params.phone;
+
+                    // TODO:: generate a code for student
+                    // student.code = createCode(params.grade)
+    
+                    studentToRegister = student;
+    
+    
+                } else { // if student was registered before
+                    issue = true;
+                    res.status(consts.BAD_REQ_CODE)
+                        .json({
+                            error: consts.STUDENT_ALREADY_REGISTERED
+                        });
+                }
+    
+            } else {
+                issue = true;
+                res.status(consts.NOT_FOUND_CODE)
                     .json({
-                        error: consts.STUDENT_ALREADY_REGISTERED
+                        error: consts.INCORRECT_MAHTA_ID
                     });
             }
-        } else {
-            issue = true;
-            res.status(consts.NOT_FOUND_CODE)
-                .json({
-                    error: consts.INCORRECT_MAHTA_ID
-                });
+        });
+    
+        if (issue) return;
+    
+        // creating main code
+        studentToRegister.code = await createCode(params.grade);
+    
+        studentToRegister.save((err => {
+            config.log(`in save student & student.code is ${studentToRegister.code}`);
+            if (err) {
+                errHandler(err, res);
+    
+            } else {
+                res.status(consts.SUCCESS_CODE).json(studentToRegister);
+            }
+        }));
+
+    }else{ // else if student dont have temp code
+
+
+        //TODO:: create a new student and generate a code
+    }
+}
+
+async function setInviter(req, res){
+
+    let code = req.cookie.code;
+    let inviterCode = req.inviterCode;
+
+    await Student.findOne({code}, (err, student)=>{
+
+        if(err){
+
+            // no student with this code
+            console.log("no student with this code");
+
+        }else{
+
+            Student.findOne({code:inviterCode}, (err, inviter)=>{
+
+                if(err){
+        
+                    // no inviter with this code
+                    console.log("no student with this code");
+        
+                }else{
+
+                    // set the inviter
+                    student.inviterCode = inviter;
+                    student.save();
+
+                    // send the name of the Inviter
+                    res.status(consts.SUCCESS_CODE).json({firstName:inviter.firstName, lastName:inviter.lastName});
+        
+                }
+            });
+
         }
     });
 
-    if (issue) return;
+}
 
+async function getInfo(req, res){
 
-    // creating main code
-    studentToRegister.code = await createCode(params.grade);
+    let params = req.body;
+    let code = req.cookie.code;
 
-    studentToRegister.save((err => {
-        config.log(`in save student & student.code is ${studentToRegister.code}`);
-        if (err) {
-            errHandler(err, res);
-
-        } else {
-            res.status(consts.SUCCESS_CODE).json(studentToRegister);
-        }
-    }));
-
+    //TODO:: send {gift, credit, giftList, creditList, inviteList}
 }
 
 async function createCode(grade) {
@@ -233,9 +285,6 @@ async function createCode(grade) {
     return (latestCode + 1);
 }
 
-
-
-
 // NOT READY
 async function getGPList(req, res, next) {
 
@@ -294,4 +343,4 @@ async function getGPList(req, res, next) {
 
 }
 
-module.exports = {checkCode,  register, getGPList};
+module.exports = {checkCode,  signup, setInviter, getInfo};

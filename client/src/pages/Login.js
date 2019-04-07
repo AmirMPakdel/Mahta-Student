@@ -10,7 +10,8 @@ import LoginHandler from '../handlers/LoginHandler';
 class LoginPage extends Component{
     state={errorMassage:""}
 
-    code = "";
+    static code = "";
+    static registered = true;
 
     render(){
 
@@ -41,10 +42,12 @@ class LoginPage extends Component{
 
             if(res.registered){
 
+                LoginPage.registered = true;
                 this.props.history.push("/");
             
             }else{
 
+                LoginPage.registered = false;
                 this.props.history.push("/signup/step1");
             }
 
@@ -58,6 +61,7 @@ class LoginPage extends Component{
 
     signUp = ()=>{
 
+        LoginPage.registered = false;
         this.props.history.push("/signup/step1");
     }
 }

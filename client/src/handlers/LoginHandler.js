@@ -12,8 +12,7 @@ const LoginHandler = (json, onFetched, onError)=>{
 
             if(res.status === 200){
                 
-                res.json().then(res=> onFetched(res))
-                .catch(err=>{ alert(err); onFetched(res) });
+                onFetched(res);
             
             }else if(res.status === 500){
 

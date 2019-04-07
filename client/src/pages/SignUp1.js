@@ -1,5 +1,7 @@
 import React, {Component} from "react";
 import './SignUp.css';
+import {Redirect} from 'react-router-dom';
+import LoginPage from './Login'; 
 
 import Button from '../components/Button';
 import Input from '../components/Input';
@@ -26,6 +28,11 @@ class SignUpPage1 extends Component{
     static studentInfo = emptyStudentInfo;
 
     render(){
+
+        if(LoginPage.registered){
+
+            return(<Redirect to="/"/>)
+        }
 
         return(
 
