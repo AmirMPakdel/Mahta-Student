@@ -8,8 +8,6 @@ const withAuth = require('../auth/middleware');
 const consts = require('../utils/consts');
 const config = require('../config/config');
 const studentHandler = require('../utils/studentHandler');
-const purchaseHandler = require('../utils/purchaseHandler');
-const giftHandler = require('../utils/giftHandler');
 const errHandler = require('../utils/errHandler');
 
 // Bring in Models
@@ -34,39 +32,29 @@ router.post('/authenticate', (req, res) => {
 
         } else if (student) { // if found student
 
+            if (!student.firstName || !student.lastName){
 
-            // Match password
-            // bcrypt.compare(password, student.password, (err, isMatch) => {
-            //
-            //     if (err) throw err;
-            //
-            //     if (isMatch) {
+                res.status(consts.SUCCESS_CODE).json({registered : false});
+            
+            }else{
 
-                    // Issue token
-                    const payload = { code: code };
-                    const token = jwt.sign(payload, config.jwtSecret, {
-                        expiresIn: '5h'
-                    });
-
-                    try {
-                        res.cookie('stoken', token, { httpOnly: true }).sendStatus(200);
-
-                    } catch (e) {
-                        config.log(e)
-                    }
-
-                    config.log(token);
-
-                } else {
-
-                    res.status(consts.UNAUTHORIZED_CODE)
-                        .json({
-                            error: consts.INCORRECT_PASSWORD
-                        });
+                try {
+                    // send the code of student az the token, expires in 1 Day
+                    res.cookie('code', code, {expires: new Date(Date.now()+ 86400)}).
+                    status(consts.SUCCESS_CODE).json({registered: true});
+    
+                } catch (e) {
+                    config.log(e)
                 }
-            // });
+            }
 
+        } else {
 
+            res.status(consts.UNAUTHORIZED_CODE)
+                .json({
+                    error: consts.INCORRECT_PASSWORD
+                });
+        }
     });
 
 });
@@ -77,25 +65,13 @@ router.post('/checkToken', withAuth, function(req, res) {
 });
 
 router.post('/logout', (req, res)=>{
-    const token = jwt.sign({username:"unknown"},"something",{expiresIn:'1s'});
-    try {
-        res.cookie('stoken', token, { httpOnly: true }).sendStatus(200);
-
-    } catch (e) {
-        res.status(404).send("مشکل در خروج");
-    }
+    res.cookie('code', 0, {expires: new Date(Date.now()+ 1)}).sendStatus(consts.SUCCESS_CODE);
 });
 
+router.post('/signup', studentHandler.signup);
 
+router.post('/setInviter', studentHandler.setInviter);
 
-router.post('/checkCode', studentHandler.checkCode);
-router.post('/register', studentHandler.register);
-
-// router.post('/commitPurchase', withAuth, purchaseHandler.commitPurchase, studentHandler.getStudentList);
-// router.post('/commitGift', withAuth, giftHandler.commitGift, studentHandler.getStudentList);
-//
-// router.post('/getGPList', withAuth, studentHandler.getGPList);
-
-
+router.post('/getInfo', studentHandler.getInfo);
 
 module.exports = router;

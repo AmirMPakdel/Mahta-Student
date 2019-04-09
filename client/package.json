@@ -2,11 +2,16 @@
   "name": "mahta_student",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://127.0.0.1:4010",
   "dependencies": {
+    "jalaali-js": "^1.1.0",
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
+    "react-responsive-modal": "^3.6.0",
     "react-router-dom": "^5.0.0",
-    "react-scripts": "2.0.5"
+    "react-scripts": "2.0.5",
+    "react-select": "^2.4.2",
+    "reactjs-input-validator": "^0.16.4"
   },
   "scripts": {
     "start": "react-scripts start",

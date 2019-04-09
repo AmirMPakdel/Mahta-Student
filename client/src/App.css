@@ -10,7 +10,7 @@
 .App-header {
   background-image: url('./assets/svg/bg.svg');
   background-size: cover;
-  background-color: rgb(88,88,88);
+  /*background-color: rgb(88,88,88);*/
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -23,6 +23,22 @@
 .App-link {
   color: #61dafb;
 }
+
+@font-face {
+  font-family: "amp";
+  src: url('../src/assets/fonts/amp_sans.ttf') format("truetype");
+}
+
+@font-face {
+  font-family: "roozname";
+  src: url('../src/assets/fonts/ARooznameh.ttf') format("truetype");
+}
+
+@font-face {
+  font-family: "ebhar";
+  src: url('../src/assets/fonts/Ebhaar.otf') format("truetype");
+}
+
 
 @keyframes App-logo-spin {
   from {

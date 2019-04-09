@@ -5,7 +5,8 @@ import './App.css';
 
 import LoginPage from './pages/Login';
 import HomePage from './pages/Home';
-import SignUpPage from './pages/SignUp';
+import SignUpPage1 from './pages/SignUp1';
+import SignUpPage2 from './pages/SignUp2';
 import My404Page from './pages/My404Page';
 
 class App extends Component {
@@ -16,9 +17,10 @@ class App extends Component {
         <Router>
 
           <Switch>
-            <Route exact path="/" component={NeedAuth(HomePage, null)}/>
+            <Route exact path="/" component={HomePage}/>
             <Route exact path="/login" component={LoginPage}/>
-            <Route exact path="/signup" component={SignUpPage}/>
+            <Route exact path="/signup/step1" component={SignUpPage1}/>
+            <Route exact path="/signup/step2" component={SignUpPage2}/>
             <Route component={My404Page}/>
           </Switch>
           

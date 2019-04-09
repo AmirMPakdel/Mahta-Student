@@ -7,18 +7,27 @@
     justify-content: center;
     border-radius:12px;
     box-shadow: 4px 4px 4px rgba(0,0,0,0.5);
-    background-color: rgb(220,96,36);
+    background-image:linear-gradient(to bottom right, rgb(255, 70, 40), rgb(212, 20, 100));
 }
 
 @media only screen and (max-width: 600px){
 
     .con{
 
-        background-color: green;
-        height: 40vh;
-        max-height: 400px;
+        height: 60vh;
+        max-height: 90vw;
+        min-height: 400px;
         width: 50vw;
         min-width: 250px;
+    }
+    .signup_link{
+        cursor: pointer;
+        font-family: 'amp';
+        font-size: 0.9em;
+        padding-bottom: 2px;
+        border-bottom-width: 1px;
+        border-bottom-style: solid; 
+        
     }
 }
 
@@ -26,10 +35,19 @@
 
     .con{
 
-        background-color: red;
         height: 65vh;
+        min-height: 400px;
         width: 45vw;
         min-width: 300px;
+    }
+    .signup_link{
+        cursor: pointer;
+        font-family: 'amp';
+        font-size: 18px;
+        padding-bottom: 2px;
+        border-bottom-width: 1px;
+        border-bottom-style: solid; 
+        
     }
 }
 
@@ -37,10 +55,18 @@
 
     .con{
 
-        background-color: blue;
         height: 65vh;
+        min-height: 400px;
         width: 30vw;
         min-width: 345px;
+    }
+    .signup_link{
+        cursor: pointer;
+        font-family: 'amp';
+        font-size: 22px;
+        border-bottom-width: 2px;
+        border-bottom-style: solid; 
+        
     }
 }
 
@@ -48,10 +74,18 @@
 
     .con{
 
-        background-color: orange;
         height: 65vh;
+        min-height: 400px;
         width: 20vw;
         min-width: 384px;
+    }
+    .signup_link{
+        cursor: pointer;
+        font-family: 'amp';
+        font-size: 24px;
+        border-bottom-width: 2px;
+        border-bottom-style: solid; 
+        
     }
 }
 

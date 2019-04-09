@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import './Input.css';
 
 class Input extends Component {
 
@@ -22,7 +23,7 @@ class Input extends Component {
             max={this.props.max}
             
             style={{
-                
+
                 height:this.props.height,
                 width:this.props.width,
                 fontFamily:'amp',
@@ -32,7 +33,11 @@ class Input extends Component {
                 borderRadius:5,
                 padding:'4px 6px',
                 backgroundColor:'rgba(255,255,255,0.9)',
-                margin:15, 
+                marginTop:15,
+                marginBottom:15,
+                marginRight:28,
+                marginLeft:28, 
+
                 color:'rgb(65,76,82)'}}>
               
             </input>

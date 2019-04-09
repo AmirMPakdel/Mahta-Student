@@ -1,10 +1,10 @@
 import urls from '../consts/urls';
 
-const LoginHandler = (json, onFetched, onError)=>{
+const InfoHandler = (onFetched, onError)=>{
 
-    fetch(urls.authenticate, {
+    fetch(urls.getInfo, {
         method:"POST",
-        body: JSON.stringify(json),
+        body: "",
         headers: {'Content-Type': 'application/json'},
         credentials: 'include'
         })
@@ -12,7 +12,8 @@ const LoginHandler = (json, onFetched, onError)=>{
 
             if(res.status === 200){
                 
-                onFetched(res);
+                res.json().then(res=> onFetched(res))
+                .catch(err=>{ alert(err); onFetched(res) });
             
             }else if(res.status === 500){
 
@@ -29,4 +30,4 @@ const LoginHandler = (json, onFetched, onError)=>{
         });
 }
 
-export default LoginHandler;
+export default InfoHandler;
