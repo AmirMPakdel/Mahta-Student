@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const mongoose = require('mongoose');
+// const jwt = require('jsonwebtoken');
+// const mongoose = require('mongoose');
 
 const withAuth = require('../auth/middleware');
 const consts = require('../utils/consts');
@@ -18,7 +17,7 @@ router.post('/authenticate', (req, res) => {
 
     const { code } = req.body;
 
-    Student.findOne({ code }, function(err, student) {
+    Student.findOne({ code: code }, function(err, student) {
 
         if (err) {
             errHandler(err);
@@ -32,11 +31,10 @@ router.post('/authenticate', (req, res) => {
 
         } else if (student) { // if found student
 
-            if (!student.firstName || !student.lastName){
-
+            if (!student.firstName && !student.lastName){ // if student was not registered
                 res.status(consts.SUCCESS_CODE).json({registered : false});
             
-            }else{
+            } else {
 
                 try {
                     // send the code of student az the token, expires in 1 Day
@@ -72,6 +70,6 @@ router.post('/signup', studentHandler.signup);
 
 router.post('/setInviter', studentHandler.setInviter);
 
-router.post('/getInfo', studentHandler.getInfo);
+router.post('/getInfo', withAuth,  studentHandler.getInfo);
 
 module.exports = router;

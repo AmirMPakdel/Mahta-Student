@@ -12,6 +12,9 @@ let puchaseSchema = mongoose.Schema({
         type: Number,
         required: true
     },
+    usedGift: Number,
+    usedCredit: Number,
+    payed: Number,
     percent:{
         type: Number,
         max: 100,

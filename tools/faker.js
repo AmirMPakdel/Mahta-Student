@@ -2,49 +2,42 @@ const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 
 // Bring in Models
-let User = require('../models/user');
 let Student = require('../models/student');
+let Notify = require('../models/notify');
 
 
 module.exports = {
 
-    insertFakeAdmin: () => {
+    insertFakeStudents: () => {
 
-        let admin = new User({
-            username: 'admin',
-            password: 'adminpassword'
-        });
+        Student.count({}, function(err, count) {
 
-        // check if admin exists
-        User.findOne({username: admin.username}, function (err, user) {
+            if (count <= 50) { // check students count
 
-            if (err) {
-                throw err;
+                for (let i = 0; i < 100; i++) {
 
-            } else if (!user) { // insert fake admin if admin did not exist
-
-                // hashing the password
-                bcrypt.genSalt(10, (err, salt) => {
-                    bcrypt.hash(admin.password, salt, (err, hash) => {
-
-                        if (err) console.log(err);
-
-                        admin.password = hash;
-
-                        admin.save((err => {
-
+                    new Student({
+                        _id: new mongoose.Types.ObjectId(),
+                        code: 1400000 + i,
+                        firstName: getFirstName(),
+                        lastName: getLastName(),
+                        grade: getGrade(),
+                        field: getField(),
+                        phone: getPhoneNumber()
+                    })
+                        .save((err) => {
                             if (err) console.log(err);
-                            else console.log(`fake admin added`)
-                        }));
-                    });
-                });
+                            else console.log(`student added`)
+                        });
+
+                }
+
             }
 
         });
-
     },
 
-    insertFakeStudents: () => {
+    insertFakeNotifies: () => {
 
         Student.count({}, function(err, count) {
 

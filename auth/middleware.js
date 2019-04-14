@@ -7,9 +7,9 @@ const withAuth = function (req, res, next) {
 
   const code = req.cookies.code;
 
-  if (!code) { // no token
+  if (!code) { // no code
     
-    res.status(consts.UNAUTHORIZED_CODE).send('Unauthorized: No token provided');
+    res.status(consts.UNAUTHORIZED_CODE).send('Unauthorized: No code provided');
 
   } else {
 

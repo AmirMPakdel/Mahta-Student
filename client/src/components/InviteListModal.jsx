@@ -16,7 +16,8 @@ class InviteListModal extends Component {
     render() { 
 
         return ( 
-            <Modal classNames={{modal:"lm_con"}} styles={{closeButton:{...{cursor:"pointer"}}}} open={this.props.open} onClose={this.props.onClose} center>
+            <Modal classNames={{modal:"lm_con"}} styles={{closeButton:{...{cursor:"pointer"}}}} open={this.props.open}
+                   onClose={this.props.onClose} center>
                 <div className="lm_list_con">
                     <div style={s.con2}>
 

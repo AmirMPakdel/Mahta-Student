@@ -8,16 +8,21 @@ let notifySchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Student'
     },
+    for: {
+      type: String,
+      enum: ['invite', 'gift', 'credit'],
+      required: true
+    },
     title:{
         type: String,
     },
     message:{
         type: String,
     },
-    seen:{
-        type: Boolean,
-        default: false
-    },
+    // seen:{
+    //     type: Boolean,
+    //     default: false
+    // },
     created: {
         type: Date,
         default: () => {
