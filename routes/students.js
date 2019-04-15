@@ -66,7 +66,7 @@ router.post('/logout', (req, res)=>{
     res.cookie('code', 0, {expires: new Date(Date.now()+ 1)}).sendStatus(consts.SUCCESS_CODE);
 });
 
-router.post('/signup', studentHandler.signup);
+router.post('/signup', studentHandler.signUp);
 
 router.post('/setInviter', studentHandler.setInviter);
 

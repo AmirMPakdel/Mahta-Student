@@ -10,6 +10,7 @@ module.exports = {
 
     MAHTA_CODE_EXISTS : 'کد مهتا تکراری',
     STUDENT_ALREADY_REGISTERED : 'کد قبلا ثبت شده است',
+    INVITER_ALREADY_REGISTERED : 'کد معرف قبلا ثبت شده است',
     GP_NOT_FOUND : 'خرید یا هدیه ای وجود ندارد',
 
     INCORRECT_FIRSTNAME : 'نام وارد شده نامعتبر',
