@@ -280,7 +280,7 @@ async function getInfo(req, res) {
                     errHandler(err, res);
                     issue = true;
 
-                } else if (fPurchase){ console.log(fPurchase.percent )
+                } else if (fPurchase){
 
                     response.creditList.push({date: fPurchase.created,
                         credit: fPurchase.payed * fPurchase.percent / 100,
@@ -294,7 +294,7 @@ async function getInfo(req, res) {
 
     if (issue) return;
 
-    await Gift.find({_id: studentId}, (err, gifts) => {
+    await Gift.find({owner: studentId}, (err, gifts) => {
 
         if(err){
             errHandler(err, res);
