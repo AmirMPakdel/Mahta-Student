@@ -8,7 +8,6 @@ const withAuth = function (req, res, next) {
   const code = req.cookies.code;
 
   if (!code) { // no code
-    
     res.status(consts.UNAUTHORIZED_CODE).send('Unauthorized: No code provided');
 
   } else {

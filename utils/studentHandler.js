@@ -9,7 +9,8 @@ const dateConverter = require('../tools/dateConverter');
 
 // Requiring models
 let Student = require('../models/student');
-let Notify = require('../models/notify');
+let Gift = require('../models/gift');
+let Purchase  = require('../models/purchase');
 
 
 /*
@@ -208,6 +209,7 @@ async function getInfo(req, res) {
     };
 
     let studentId;
+    let inviteds = [];
 
     await Student.findOne({code}, (err, student) => {
 
@@ -221,6 +223,7 @@ async function getInfo(req, res) {
             response.credit = student.credit;
 
             studentId = student._id;
+            inviteds = student.inviteds;
 
         } else {
             issue = true;
@@ -233,31 +236,67 @@ async function getInfo(req, res) {
 
     if (issue) return;
 
-    await Notify.find({owner: studentId}, {_id: 0, __v: 0 }, (err, notifies) => {
+    let purchases = [];
+
+    inviteds.forEach(async invited => {
+
+        if (issue) return;
+
+        let invitedName = '';
+
+        await Student.findOne({_id: invited}, (err, student) => {
+
+            if(err){
+                errHandler(err, res);
+                issue = true;
+
+            } else if (student){
+
+                response.inviteList.push({date: student.created, firstName: student.firstName,
+                    lastName: student.lastName});
+
+                invitedName = student.firstName + ' ' + student.lastName;
+
+                if (student.purchases) {
+                    purchases = student.purchases;
+                }
+            }
+        });
+
+        if (issue) return;
+
+        purchases.forEach(async purchase => {
+
+            await Purchase.find({_id: purchase}, (err, purchase) => {
+
+                if(err){
+                    errHandler(err, res);
+                    issue = true;
+
+                } else if (purchase){
+
+                    purchase.forEach(gift => {
+                        response.creditList.push({date: purchase.created, credit: purchase.price,
+                            name: invitedName});
+                    });
+                }
+            });
+        });
+
+    });
+
+    if (issue) return;
+
+    await Gift.find({_id: studentId}, (err, gifts) => {
 
         if(err){
             errHandler(err, res);
             issue = true;
 
-        } else if (notifies){
+        } else if (gifts){
 
-            notifies.forEach(notify => {
-
-                switch (notify.for) {
-
-                    case 'invite':
-                        response.inviteList.push({date: notify.created, message: notify.message});
-                        break;
-
-                    case 'credit':
-                        response.creditList.push({date: notify.created, message: notify.message});
-                        break;
-
-                    case 'gift':
-                        response.giftList.push({date: notify.created, message: notify.message});
-                        break;
-                }
-
+            gifts.forEach(gift => {
+                response.giftList.push({date: gift.created, gift: gift.price, info: gift.info});
             });
         }
     });
@@ -265,7 +304,7 @@ async function getInfo(req, res) {
     res.status(consts.SUCCESS_CODE)
         .json(response);
 
-}
+}// done
 
 async function createCode(grade) {
     config.log(`in create code`);
