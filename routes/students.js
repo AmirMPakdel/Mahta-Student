@@ -38,7 +38,7 @@ router.post('/authenticate', (req, res) => {
 
                 try {
                     // send the code of student az the token, expires in 1 Day
-                    res.cookie('code', code, {expires: new Date(Date.now()+ 86400)}).
+                    res.cookie('code', code, {expires: new Date(Date.now()+ 8640000)}).
                     status(consts.SUCCESS_CODE).json({registered: true});
     
                 } catch (e) {

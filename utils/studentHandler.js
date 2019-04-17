@@ -213,7 +213,7 @@ async function getInfo(req, res) {
 
     await Student.findOne({code}, (err, student) => {
 
-        if(err){
+        if(err) {
             errHandler(err, res);
             issue = true;
 
@@ -236,9 +236,13 @@ async function getInfo(req, res) {
 
     if (issue) return;
 
-    let purchases = [];
+    let purchasesList = [];
 
-    inviteds.forEach(async invited => {
+
+    // DO NOT EVER USE FOR EACH LOOP FOR THIS KINDA SHIT
+    for (let i = 0; i < inviteds.length; i++) {
+
+        let invited = inviteds[i];
 
         if (issue) return;
 
@@ -258,32 +262,35 @@ async function getInfo(req, res) {
                 invitedName = student.firstName + ' ' + student.lastName;
 
                 if (student.purchases) {
-                    purchases = student.purchases;
+                    purchasesList = student.purchases;
                 }
             }
         });
 
         if (issue) return;
 
-        purchases.forEach(async purchase => {
+        for (let j = 0; j < purchasesList.length; j++) {
 
-            await Purchase.find({_id: purchase}, (err, purchase) => {
+            let purchase = purchasesList[j];
+
+            // if use find function it would return an array with only 1 index for fuck sake
+            await Purchase.findOne({_id: purchase}, (err, fPurchase) => {
 
                 if(err){
                     errHandler(err, res);
                     issue = true;
 
-                } else if (purchase){
+                } else if (fPurchase){ console.log(fPurchase.percent )
 
-                    purchase.forEach(gift => {
-                        response.creditList.push({date: purchase.created, credit: purchase.price,
-                            name: invitedName});
-                    });
+                    response.creditList.push({date: fPurchase.created,
+                        credit: fPurchase.payed * fPurchase.percent / 100,
+                        name: invitedName});
                 }
             });
-        });
+        }
 
-    });
+    }
+
 
     if (issue) return;
 
@@ -305,6 +312,7 @@ async function getInfo(req, res) {
         .json(response);
 
 }// done
+
 
 async function createCode(grade) {
     config.log(`in create code`);
