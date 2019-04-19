@@ -56,7 +56,7 @@ class SignUpPage1 extends Component{
                     placeholder="پایه" onChange={(e)=>{SignUpPage1.studentInfo.grade = e.value}}/>
 
                     <Input height={30} width={200} placeholder="شماره همراه" type="number"
-                    onChange={(e)=>{SignUpPage1.studentInfo.code = e.target.value}}/>
+                    onChange={(e)=>{SignUpPage1.studentInfo.phone = e.target.value}}/>
                     
                 </div>
 

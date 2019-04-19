@@ -12,7 +12,11 @@ const SignUpFirstStep = (json, onFetched, onError)=>{
 
             if(res.status === 200){
                 
-                onFetched();
+                res.json().then((data)=>{
+                    onFetched(data);
+                }).catch((err)=>{
+                    onError(err);
+                })
             
             }else if(res.status === 500){
 

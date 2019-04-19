@@ -18,6 +18,8 @@ class HomePage extends Component {
 
     componentDidMount(){
 
+        setTimeout(this.numbersAnim,400);
+
         InfoHandler((res)=>{
 
             HomePage.Info = res;
@@ -99,9 +101,14 @@ class HomePage extends Component {
     }
 
     numbersAnim=()=>{
-        let credit = HomePage.Info.credit || 0;
-        let invites = HomePage.Info.invites || 0;
-        let gift = HomePage.Info.gift || 0;
+        /*
+        let credit = HomePage.Info.credit || 1000;
+        let invites = HomePage.Info.invites || 5;
+        let gift = HomePage.Info.gift || 30000;*/
+
+        let credit = 1000;
+        let invites = 5;
+        let gift = 30000;
 
         
         let credit_int = Number.parseInt(credit/803);

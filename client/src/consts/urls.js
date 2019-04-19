@@ -1,8 +1,8 @@
 const urls = {
 
     authenticate:"/api/student/authenticate",
-    signup1:"/api/student/signupFirstStep",
-    signup2:"/api/student/signupLastStep",
+    signup1:"/api/student/signup",
+    signup2:"/api/student/setInviter",
     getInfo:'/api/student/getInfo',
 }
 
