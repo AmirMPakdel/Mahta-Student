@@ -9,13 +9,14 @@ const dateConverter = require('../tools/dateConverter');
 
 // Requiring models
 let Student = require('../models/student');
-let Notify = require('../models/notify');
+let Gift = require('../models/gift');
+let Purchase  = require('../models/purchase');
 
 
 /*
 * registering student
 * */
-async function signup(req, res, next) {
+async function signUp(req, res, next) {
 
     let params = req.body;
 
@@ -29,7 +30,7 @@ async function signup(req, res, next) {
         let query = {
             code: Number(params.code)
         };
-    
+
         await Student.findOne(query, function(err, student) {
     
             if (err) {
@@ -51,7 +52,7 @@ async function signup(req, res, next) {
                     student.school = params.school;
 
                     studentToRegister = student;
-    
+
                 } else { // if student was registered before
                     issue = true;
                     res.status(consts.BAD_REQ_CODE)
@@ -71,15 +72,11 @@ async function signup(req, res, next) {
     
         if (issue) return;
     
-        // creating main code
-        studentToRegister.code = await createCode(params.grade);
-    
     } else { // else if student does not have temp code
 
         studentToRegister = new Student({});
 
         studentToRegister._id = new mongoose.Types.ObjectId();
-        studentToRegister.code = await createCode(params.grade);
         studentToRegister.firstName = params.firstName;
         studentToRegister.lastName = params.lastName;
         studentToRegister.grade = params.grade;
@@ -87,8 +84,10 @@ async function signup(req, res, next) {
         studentToRegister.phone = params.phone;
         studentToRegister.home = params.home;
         studentToRegister.school = params.school;
-
     }
+
+    // creating main code
+    studentToRegister.code = await createCode(params.grade);
 
     if (issue) return;
 
@@ -99,28 +98,42 @@ async function signup(req, res, next) {
             errHandler(err, res);
 
         } else {
-            res.status(consts.SUCCESS_CODE).json(studentToRegister);
+            res.status(consts.SUCCESS_CODE).json(studentToRegister.code);
         }
     }));
-}
+}// done
 
 
 async function setInviter(req, res){
 
-    let code = req.cookie.code;
+    let code =  req.body.code; // for debugging purposes
     let inviterCode = req.body.inviterCode;
 
     let studentToSave;
     let inviterToSave;
 
+    let issue = false;
+
     // check if student exists
-    await Student.findOne({code}, (err, student)=>{
+    await Student.findOne({code: code}, (err, student)=>{
 
         if(err){
             errHandler(err, res);
             issue = true;
 
         } else if (student){
+
+            // if already had inviter
+            if (student.inviter) {
+
+                issue = true;
+                res.status(consts.BAD_REQ_CODE)
+                    .json({
+                        error: consts.INVITER_ALREADY_REGISTERED
+                    });
+                return;
+            }
+
             studentToSave = student;
 
         } else if (!student){
@@ -135,7 +148,7 @@ async function setInviter(req, res){
     if (issue) return;
 
     // finding inviter
-    Student.findOne({code: inviterCode}, (err, inviter) => {
+    await Student.findOne({code: inviterCode}, (err, inviter) => {
 
         if(err){
             errHandler(err, res);
@@ -144,7 +157,8 @@ async function setInviter(req, res){
         } else if (inviter){ // if inviter was found
 
             // set the inviter
-            studentToSave.inviterCode = inviter._id;
+            studentToSave.inviter = inviter._id;
+
             inviterToSave = inviter;
 
         } else if (!inviter) { // if inviter was not found
@@ -177,8 +191,8 @@ async function setInviter(req, res){
             });
         }
     });
+}// done
 
-}
 
 async function getInfo(req, res) {
 
@@ -195,10 +209,11 @@ async function getInfo(req, res) {
     };
 
     let studentId;
+    let inviteds = [];
 
     await Student.findOne({code}, (err, student) => {
 
-        if(err){
+        if(err) {
             errHandler(err, res);
             issue = true;
 
@@ -208,6 +223,7 @@ async function getInfo(req, res) {
             response.credit = student.credit;
 
             studentId = student._id;
+            inviteds = student.inviteds;
 
         } else {
             issue = true;
@@ -220,31 +236,74 @@ async function getInfo(req, res) {
 
     if (issue) return;
 
-    await Notify.find({owner: studentId}, {_id: 0, __v: 0 }, (err, notifies) => {
+    let purchasesList = [];
+
+
+    // DO NOT EVER USE FOR EACH LOOP FOR THIS KINDA SHIT
+    for (let i = 0; i < inviteds.length; i++) {
+
+        let invited = inviteds[i];
+
+        if (issue) return;
+
+        let invitedName = '';
+
+        await Student.findOne({_id: invited}, (err, student) => {
+
+            if(err){
+                errHandler(err, res);
+                issue = true;
+
+            } else if (student){
+
+                response.inviteList.push({date: student.created, firstName: student.firstName,
+                    lastName: student.lastName});
+
+                invitedName = student.firstName + ' ' + student.lastName;
+
+                if (student.purchases) {
+                    purchasesList = student.purchases;
+                }
+            }
+        });
+
+        if (issue) return;
+
+        for (let j = 0; j < purchasesList.length; j++) {
+
+            let purchase = purchasesList[j];
+
+            // if use find function it would return an array with only 1 index for fuck sake
+            await Purchase.findOne({_id: purchase}, (err, fPurchase) => {
+
+                if(err){
+                    errHandler(err, res);
+                    issue = true;
+
+                } else if (fPurchase){
+
+                    response.creditList.push({date: fPurchase.created,
+                        credit: fPurchase.payed * fPurchase.percent / 100,
+                        name: invitedName});
+                }
+            });
+        }
+
+    }
+
+
+    if (issue) return;
+
+    await Gift.find({owner: studentId}, (err, gifts) => {
 
         if(err){
             errHandler(err, res);
             issue = true;
 
-        } else if (notifies){
+        } else if (gifts){
 
-            notifies.forEach(notify => {
-
-                switch (notify.for) {
-
-                    case 'invite':
-                        response.inviteList.push({date: notify.created, message: notify.message});
-                        break;
-
-                    case 'credit':
-                        response.creditList.push({date: notify.created, message: notify.message});
-                        break;
-
-                    case 'gift':
-                        response.giftList.push({date: notify.created, message: notify.message});
-                        break;
-                }
-
+            gifts.forEach(gift => {
+                response.giftList.push({date: gift.created, gift: gift.price, info: gift.info});
             });
         }
     });
@@ -252,7 +311,8 @@ async function getInfo(req, res) {
     res.status(consts.SUCCESS_CODE)
         .json(response);
 
-}
+}// done
+
 
 async function createCode(grade) {
     config.log(`in create code`);
@@ -331,7 +391,8 @@ async function createCode(grade) {
 
     console.log(`temp : ${temp}`);
 
-    await Student.findOne({ code: { $gt: temp, $lt: temp + 10000 }}, { code:1, _id:0 }, { sort: { 'created' : -1 } },
+    await Student.findOne({ code: { $gt: temp, $lt: temp + 10000 }}, { code:1, _id:0 },
+        { sort: { 'code' : -1 } },
         function(err, student) {
 
             config.log(`finding latest added student`);
@@ -359,4 +420,4 @@ async function createCode(grade) {
 
 
 
-module.exports = {signup, setInviter, getInfo};
+module.exports = {signUp, setInviter, getInfo};
