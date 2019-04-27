@@ -14,7 +14,7 @@ function NeedAuth(Comp,prop) {
 
     componentDidMount() {
       // TODO: change this to POST
-      fetch('/api/admin/checkToken',{
+      fetch('/api/student/checkToken',{
         method:"POST",
         body: "",
         headers: {'Content-Type': 'application/json'},
@@ -22,12 +22,9 @@ function NeedAuth(Comp,prop) {
         })
       .then(res => {
         if (res.status === 200) {
-
-          if(this.prop.height != undefined){
             
-            this.setState({component:<Comp history={this.props.history} height={this.prop.height} width={this.prop.width}/>});
-          }
-
+          this.setState({component:<Comp history={this.props.history}/>});
+        
         } else {
           const error = new Error(res.error);
           throw error;

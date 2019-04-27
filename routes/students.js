@@ -31,7 +31,7 @@ router.post('/authenticate', (req, res) => {
 
         } else if (student) { // if found student
 
-            if (!student.firstName && !student.lastName){ // if student was not registered
+            if (!student.firstName || !student.lastName){ // if student was not registered
                 res.status(consts.SUCCESS_CODE).json({registered : false});
             
             } else {
