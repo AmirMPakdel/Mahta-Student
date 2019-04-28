@@ -226,6 +226,9 @@ async function getInfo2(req, res) {
 
 async function getInfo(req, res) {
 
+    const home_main_title ='سال نو مبارک';
+    const home_sub_title = "میتونی برای دیدن لیست کسایی که دعوت کردی ، هدایای که از مهتا گرفتی و اعتباری که بدست آوردی روی آیکون مخصوص خودشون کلیک کنی";
+
     let code = req.cookies.code;
 
     let issue = false;
@@ -233,6 +236,8 @@ async function getInfo(req, res) {
     let response = {
         gift: 0,
         credit: 0,
+        mainTitle:home_main_title,
+        subTitle:home_sub_title,
         giftList: [],
         creditList: [],
         inviteList: [],

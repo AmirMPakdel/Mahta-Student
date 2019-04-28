@@ -13,7 +13,7 @@ import GiftListModal from '../components/GiftListModal';
 
 class HomePage extends Component {
 
-    state={gift:0, credit:0, invites:0, listOfGifts:[], creditList:false, inviteList:false, giftList:false}
+    state={gift:0, credit:0, invites:0, main_title:"", sub_title:"",creditList:false, inviteList:false, giftList:false}
 
     static Info = {};
 
@@ -23,11 +23,20 @@ class HomePage extends Component {
             
             HomePage.Info = res;
 
-            this.showCreditList(HomePage.Info.creditList);
-            this.showGiftList(HomePage.Info.giftList);
-            this.showInviteList(HomePage.Info.inviteList);
+            let newState = Object.assign({}, this.state);
+            newState.main_title = res.mainTitle;
+            newState.sub_title = res.subTitle;
 
-            setTimeout(this.numbersAnim,400);
+            this.setState(newState, ()=>{
+
+                    
+                this.showCreditList(HomePage.Info.creditList);
+                this.showGiftList(HomePage.Info.giftList);
+                this.showInviteList(HomePage.Info.inviteList);
+
+                setTimeout(this.numbersAnim,400);
+            })
+
 
         }, err=>{
 
@@ -49,9 +58,9 @@ class HomePage extends Component {
                         
                     </div>
                     <div className="home_main_con">
-                        <div className="home_big_txt">{"سال نو مبارک"}</div>
+                        <div className="home_big_txt">{this.state.main_title}</div>
                         <div className="home_line2"/>
-                        <div className="home_small_txt">{"میتونی برای دیدن لیست کسایی که دعوت کردی ، هدایای که از مهتا گرفتی و اعتباری که بدست آوردی روی آیکون مخصوص خودشون کلیک کنی"}</div>
+                        <div className="home_small_txt">{this.state.sub_title}</div>
                         <div style={{height:'32%'}}/>
                     </div>
                 </div>

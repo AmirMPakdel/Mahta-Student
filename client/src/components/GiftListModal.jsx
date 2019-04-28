@@ -48,7 +48,6 @@ class GiftListModal extends Component {
     }
 
     showList = (list)=>{
-        alert(JSON.stringify(list));
 
         let CompList = [];
         let i = 1;
