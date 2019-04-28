@@ -28,7 +28,7 @@ class Input extends Component {
                 width:this.props.width,
                 fontFamily:'amp',
                 fontWeight:'bold', 
-                fontSize:18,
+                fontSize:'0.8em',
                 textAlign:'center',
                 borderRadius:5,
                 padding:'4px 6px',

@@ -1,6 +1,6 @@
 import urls from '../consts/urls';
 
-const SignUpFirstStep = (json, onFetched, onError)=>{
+const SignUp1 = (json, onFetched, onError)=>{
 
     fetch(urls.signup1, {
         method:"POST",
@@ -33,7 +33,7 @@ const SignUpFirstStep = (json, onFetched, onError)=>{
         });
 }
 
-const SignUpLastStep = (json, onFetched, onError)=>{
+const SignUp2 = (json, onFetched, onError)=>{
 
     fetch(urls.signup2, {
         method:"POST",
@@ -62,4 +62,4 @@ const SignUpLastStep = (json, onFetched, onError)=>{
             onError("خطای شبکه و اتصال به سرور");
         });
 }
-export {SignUpFirstStep, SignUpLastStep};
+export {SignUp1, SignUp2};

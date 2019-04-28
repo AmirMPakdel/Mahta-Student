@@ -3,7 +3,7 @@ let mongoose = require('mongoose');
 let moment = require('moment-timezone');
 
 let studentSchema = mongoose.Schema({
-    _id: mongoose.Schema.Types.ObjectId,
+
     code:{
         type: Number,
         required: true,

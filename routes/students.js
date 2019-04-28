@@ -38,7 +38,7 @@ router.post('/authenticate', (req, res) => {
 
                 try {
                     // send the code of student az the token, expires in 1 Day
-                    res.cookie('code', code, {expires: new Date(Date.now()+ 8640000)}).
+                    res.cookie('code', code, {expires: new Date(Date.now()+ 259200000)}).
                     status(consts.SUCCESS_CODE).json({registered: true});
     
                 } catch (e) {
@@ -66,9 +66,9 @@ router.post('/logout', (req, res)=>{
     res.cookie('code', 0, {expires: new Date(Date.now()+ 1)}).sendStatus(consts.SUCCESS_CODE);
 });
 
-router.post('/signup', studentHandler.signUp);
+router.post('/signup1', studentHandler.signUp1);
 
-router.post('/setInviter', studentHandler.setInviter);
+router.post('/signup2', studentHandler.signUp2);
 
 router.post('/getInfo', withAuth,  studentHandler.getInfo);
 

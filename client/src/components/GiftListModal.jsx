@@ -9,8 +9,10 @@ class GiftListModal extends Component {
 
     componentDidMount(){
 
-        let list = [{info:"امیرمحمد پاکدل", gift:"2000", created:"1377/4/7"}]
-        this.showList(list);
+        //let list = [{info:"امیرمحمد پاکدل", gift:"2000", created:"1377/4/7"}]
+        //this.showList(this.props.list);
+
+        this.props.getGiftList(this.showList);
     }
 
     render() { 
@@ -46,6 +48,7 @@ class GiftListModal extends Component {
     }
 
     showList = (list)=>{
+        alert(JSON.stringify(list));
 
         let CompList = [];
         let i = 1;

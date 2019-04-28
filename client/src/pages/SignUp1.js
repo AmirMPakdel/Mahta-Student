@@ -7,13 +7,12 @@ import Button from '../components/Button';
 import Input from '../components/Input';
 import lock from '../assets/svg/lock.svg';
 import Select from 'react-select';
-import {SignUpFirstStep} from '../handlers/SignUpHandler';
+import {SignUp1} from '../handlers/SignUpHandler';
 import SuccessModal from '../components/SuccessModal';
 import ErrorModal from '../components/ErrorModal';
 
 const emptyStudentInfo = {
 
-    inviterCode:0,
     firstName:"",
     lastName:"",
     field:"",
@@ -63,7 +62,7 @@ class SignUpPage1 extends Component{
                 <div className="signup_space1"/>
 
                 <div className="signup_accept">
-                    <Button margin="0%" height="100%" width="100%" onClick={this.continue}>ادامه</Button>
+                    <Button margin="0%" height="100%" width="100%" onClick={this.continue}>ثبت</Button>
                 </div>
 
                 <div className="signup_space1"/>
@@ -77,7 +76,7 @@ class SignUpPage1 extends Component{
                 </ErrorModal>
                 
                 <SuccessModal open={this.state.successModal} onClose={this.closeSuccessModal}>
-                    <div style={{fontSize:'1.6em', color:'#ff2'}}>{126224}</div>
+                    <div style={{fontSize:'1.6em', color:'#ff2'}}>{this.state.code}</div>
                     <br/>
                    این کد دانش آموزیته. باهاش میتونی از هدایا و اعتبارت استفاده کنی و وارد سامانه بشی
                     <br/>
@@ -92,7 +91,8 @@ class SignUpPage1 extends Component{
 
     continue=()=>{
 
-        SignUpFirstStep(SignUpPage1.studentInfo, (res)=>{
+        SignUpPage1.studentInfo.code = LoginPage.code;
+        SignUp1(SignUpPage1.studentInfo, (res)=>{
 
             this.openSuccessModal(res.code);
 
@@ -125,7 +125,7 @@ class SignUpPage1 extends Component{
         newState.successModal = false;
         this.setState(newState);
 
-        this.props.history.push('/signup/step2')
+        this.props.history.push('/');
     }
 
     closeErrorModal = ()=>{

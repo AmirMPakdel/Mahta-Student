@@ -10,8 +10,9 @@ import LoginHandler from '../handlers/LoginHandler';
 class LoginPage extends Component{
     state={errorMassage:""}
 
-    static code = "";
+    static code = 0;
     static registered = true;
+    static invited = false;
 
     render(){
 
@@ -23,12 +24,12 @@ class LoginPage extends Component{
                     <div style={s.space}/>
                     <div unselectable style={s.title}>سامانه مهتا</div>
                     <div style={s.space}/>
-                    <Input height={30} width="80%" placeholder="کد دانش آموزی" onChange={(e)=>{this.code = e.target.value}}/>
+                    <Input height={30} width="80%" placeholder="کد دانش آموزی یا کد کارت دعوت" onChange={(e)=>{LoginPage.code = Number(e.target.value)}}/>
                     <div style={s.space}/>
                     <Button height={50} width="60%" onClick={this.login} >ورود</Button>
                     <div style={s.error}>{this.state.errorMassage}</div>
                     <div style={s.miniSpace}/>
-                    <div className="signup_link" onClick={this.signUp}>ورود به بخش ثبت نام</div>
+                    <div className="signup_link" onClick={this.signUp}>ثبت نام بدون کارت هدیه</div>
                     <div style={s.miniSpace}/>
                 </div>
 
@@ -38,15 +39,17 @@ class LoginPage extends Component{
 
     login = ()=>{
 
-        LoginHandler({code:this.code}, (res)=>{
+        LoginHandler({code:LoginPage.code}, (res)=>{
 
             if(res.registered){
 
+                LoginPage.invited = false;
                 LoginPage.registered = true;
                 this.props.history.push("/");
             
             }else{
 
+                LoginPage.invited = false;
                 LoginPage.registered = false;
                 this.props.history.push("/signup/step1");
             }
@@ -61,8 +64,9 @@ class LoginPage extends Component{
 
     signUp = ()=>{
 
+        LoginPage.invited = true;
         LoginPage.registered = false;
-        this.props.history.push("/signup/step1");
+        this.props.history.push("/signup/step2");
     }
 }
 

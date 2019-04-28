@@ -9,8 +9,10 @@ class InviteListModal extends Component {
 
     componentDidMount(){
 
-        let list = [{firstName:"امیرمحمد", lastName:"پاکدل", created:"1377/4/7"}]
-        this.showList(list);
+        //let list = [{firstName:"امیرمحمد", lastName:"پاکدل", created:"1377/4/7"}]
+        //this.showList(list);
+
+        this.props.getInviteList(this.showList);
     }
 
     render() { 

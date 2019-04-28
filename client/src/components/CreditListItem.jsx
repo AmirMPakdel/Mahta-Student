@@ -7,7 +7,7 @@ class CreditListItem extends Component {
 
         let JDate = "";
 
-        let date = this.props.element.created;
+        let date = this.props.element.date;
         let year = Number(date.slice(0,4));
         let month = Number(date.slice(5,7));
         let day = Number(date.slice(8,10));

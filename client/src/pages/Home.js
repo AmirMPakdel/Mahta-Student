@@ -5,6 +5,7 @@ import {showNumber} from '../utils/NumberUtils'
 import gift from '../assets/svg/gift.svg';
 import credit from '../assets/svg/credit.svg';
 import user from '../assets/svg/user.svg';
+import LogoutHandler from '../handlers/LogoutHandler';
 import InfoHandler from '../handlers/InfoHandler';
 import CreditListModal from '../components/CreditListModal';
 import InviteListModal from '../components/InviteListModal';
@@ -12,17 +13,20 @@ import GiftListModal from '../components/GiftListModal';
 
 class HomePage extends Component {
 
-    state={gift:0, credit:0, invites:0, creditList:false, inviteList:false, giftList:false}
+    state={gift:0, credit:0, invites:0, listOfGifts:[], creditList:false, inviteList:false, giftList:false}
 
     static Info = {};
 
     componentDidMount(){
 
-        setTimeout(this.numbersAnim,400);
-
         InfoHandler((res)=>{
-
+            
             HomePage.Info = res;
+
+            this.showCreditList(HomePage.Info.creditList);
+            this.showGiftList(HomePage.Info.giftList);
+            this.showInviteList(HomePage.Info.inviteList);
+
             setTimeout(this.numbersAnim,400);
 
         }, err=>{
@@ -88,28 +92,39 @@ class HomePage extends Component {
 
                 </div>
                 
-                <CreditListModal open={this.state.creditList} onClose={this.closeCreditList}/>
-                <InviteListModal open={this.state.inviteList} onClose={this.closeInviteList}/>
-                <GiftListModal open={this.state.giftList} onClose={this.closeGiftList}/>
+                <CreditListModal open={this.state.creditList} onClose={this.closeCreditList} getCreditList={this.getCreditList}/>
+                <InviteListModal open={this.state.inviteList} onClose={this.closeInviteList} getInviteList={this.getInviteList}/>
+                <GiftListModal open={this.state.giftList} onClose={this.closeGiftList} list={this.state.listOfGifts} getGiftList={this.getGiftList}/>
 
             </div>
          );
     }
 
+    getCreditList = (showList)=>{
+        this.showCreditList = showList;
+    }
+
+    getGiftList = (showList)=>{
+        this.showGiftList = showList;
+    }
+
+    getInviteList = (showList)=>{
+        this.showInviteList = showList;
+    }
+
     logout = ()=>{
 
+        LogoutHandler(()=>{
+
+            this.props.history.push("/login");
+        })
     }
 
     numbersAnim=()=>{
-        /*
-        let credit = HomePage.Info.credit || 1000;
-        let invites = HomePage.Info.invites || 5;
-        let gift = HomePage.Info.gift || 30000;*/
-
-        let credit = 1000;
-        let invites = 5;
-        let gift = 30000;
-
+        
+        let credit = HomePage.Info.credit || 0;
+        let invites = HomePage.Info.inviteList.length || 0;
+        let gift = HomePage.Info.gift || 0;
         
         let credit_int = Number.parseInt(credit/803);
         let gift_int = Number.parseInt(gift/803);

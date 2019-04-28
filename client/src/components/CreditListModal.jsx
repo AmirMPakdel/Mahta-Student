@@ -9,8 +9,11 @@ class CreditListModal extends Component {
 
     componentDidMount(){
 
-        let list = [{name:"امیرمحمد پاکدل", credit:"2000", created:"1377/4/7"}]
-        this.showList(list);
+        //let list = [{name:"امیرمحمد پاکدل", credit:"2000", created:"1377/4/7"}];
+        
+        //this.showList(list);
+
+        this.props.getCreditList(this.showList);
     }
 
     render() { 
@@ -46,6 +49,7 @@ class CreditListModal extends Component {
     }
 
     showList = (list)=>{
+        
 
         let CompList = [];
         let i = 1;

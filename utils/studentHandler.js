@@ -16,185 +16,94 @@ let Purchase  = require('../models/purchase');
 /*
 * registering student
 * */
-async function signUp(req, res, next) {
+
+async function signUp1(req, res){
 
     let params = req.body;
 
     let issue = validator.validateSignUp(req, res);
 
-    let studentToRegister;
+    let tempCode = params.code;
 
-    // if student has temp code
-    if(params.code) {
 
-        let query = {
-            code: Number(params.code)
-        };
+    if(issue){
+        
+        return;
 
-        await Student.findOne(query, function(err, student) {
-    
-            if (err) {
-                errHandler(err, res);
-                issue = true;
-    
-            } else if (student) { // if a student was found
-    
-                if (!student.firstName && !student.lastName) { // if student wasn't registered before
-    
-                    config.log(`student wasn't registered`);
+    }else{
 
-                    student.firstName = params.firstName;
-                    student.lastName = params.lastName;
-                    student.field = params.field;
-                    student.grade = params.grade;
-                    student.phone = params.phone;
-                    student.home = params.home;
-                    student.school = params.school;
+        Student.findOne({code:tempCode}, (err, student)=>{
+            
+            if(err || !student){
 
-                    studentToRegister = student;
+                res.status(consts.BAD_REQ_CODE).json({error:consts.INCORRECT_MAHTA_ID});
+            
+            }else{
 
-                } else { // if student was registered before
-                    issue = true;
-                    res.status(consts.BAD_REQ_CODE)
-                        .json({
-                            error: consts.STUDENT_ALREADY_REGISTERED
-                        });
-                }
-    
-            } else {
-                issue = true;
-                res.status(consts.NOT_FOUND_CODE)
-                    .json({
-                        error: consts.INCORRECT_MAHTA_ID
-                    });
+                student.firstName = params.firstName;
+                student.lastName = params.lastName;
+                student.field = params.field;
+                student.grade = params.grade;
+                student.phone = params.phone;
+                createCode(student.grade).then(code=>{
+                    student.code = code;
+                    student.save();
+
+                    res.cookie('code', code, {expires: new Date(Date.now()+ 259200000)}).
+                    status(consts.SUCCESS_CODE).json({code});
+                });
             }
         });
-    
-        if (issue) return;
-    
-    } else { // else if student does not have temp code
-
-        studentToRegister = new Student({});
-
-        studentToRegister._id = new mongoose.Types.ObjectId();
-        studentToRegister.firstName = params.firstName;
-        studentToRegister.lastName = params.lastName;
-        studentToRegister.grade = params.grade;
-        studentToRegister.field = params.field;
-        studentToRegister.phone = params.phone;
-        studentToRegister.home = params.home;
-        studentToRegister.school = params.school;
     }
-
-    // creating main code
-    studentToRegister.code = await createCode(params.grade);
-
-    if (issue) return;
-
-    // saving student
-    studentToRegister.save((err => {
-        config.log(`in save student & student.code is ${studentToRegister.code}`);
-        if (err) {
-            errHandler(err, res);
-
-        } else {
-            res.status(consts.SUCCESS_CODE).json(studentToRegister.code);
-        }
-    }));
-}// done
+}//done
 
 
-async function setInviter(req, res){
+async function signUp2(req, res){
 
-    let code =  req.body.code; // for debugging purposes
-    let inviterCode = req.body.inviterCode;
+    let params = req.body;
 
-    let studentToSave;
-    let inviterToSave;
+    let issue = validator.validateSignUp(req, res);
 
-    let issue = false;
+    let inviterCode = params.inviterCode;
 
-    // check if student exists
-    await Student.findOne({code: code}, (err, student)=>{
+    if(issue){
 
-        if(err){
-            errHandler(err, res);
-            issue = true;
+        return;
 
-        } else if (student){
+    }else{
 
-            // if already had inviter
-            if (student.inviter) {
+        Student.findOne({code:inviterCode}, (err, inviter)=>{
+            
+            if(err || !inviter){
 
-                issue = true;
-                res.status(consts.BAD_REQ_CODE)
-                    .json({
-                        error: consts.INVITER_ALREADY_REGISTERED
-                    });
-                return;
-            }
+                res.status(consts.BAD_REQ_CODE).json({error:consts.INCORRECT_INVITER_ID});
+            
+            }else{
 
-            studentToSave = student;
+                let newStudent = new Student();
+                newStudent.firstName = params.firstName;
+                newStudent.lastName = params.lastName;
+                newStudent.field = params.field;
+                newStudent.grade = params.grade;
+                newStudent.phone = params.phone;
+                newStudent.inviter = inviter;
+                createCode(newStudent.grade).then(code=>{
+                    newStudent.code = code;
+                    newStudent.save();
 
-        } else if (!student){
-            issue = true;
-            res.status(consts.NOT_FOUND_CODE)
-                .json({
-                    error: consts.INCORRECT_MAHTA_ID
+                    inviter.inviteds.push(newStudent._id);
+                    inviter.save();
+
+                    res.cookie('code', code, {expires: new Date(Date.now()+ 259200000)}).
+                    status(consts.SUCCESS_CODE).json({code});
                 });
-        }
-    });
-
-    if (issue) return;
-
-    // finding inviter
-    await Student.findOne({code: inviterCode}, (err, inviter) => {
-
-        if(err){
-            errHandler(err, res);
-            issue = true;
-
-        } else if (inviter){ // if inviter was found
-
-            // set the inviter
-            studentToSave.inviter = inviter._id;
-
-            inviterToSave = inviter;
-
-        } else if (!inviter) { // if inviter was not found
-            issue = true;
-            res.status(consts.NOT).json(studentToRegister);
-        }
-    });
-
-    if (issue) return;
-
-    // saving student
-    await studentToSave.save(err => {
-
-        if (err) {
-            issue = true;
-            errHandler(err, res);
-        }
-    });
-
-    // saving inviter
-    await inviterToSave.save(err => {
-
-        if (err) {
-            errHandler(err, res);
-
-        } else {
-            res.status(consts.SUCCESS_CODE).json({
-                firstName: inviterToSave.firstName,
-                lastname: inviterToSave.lastName,
-            });
-        }
-    });
-}// done
+            }
+        });
+    }
+}//done
 
 
-async function getInfo(req, res) {
+async function getInfo2(req, res) {
 
     let code = req.cookies.code;
 
@@ -301,17 +210,73 @@ async function getInfo(req, res) {
             issue = true;
 
         } else if (gifts){
-
+            
             gifts.forEach(gift => {
                 response.giftList.push({date: gift.created, gift: gift.price, info: gift.info});
             });
         }
     });
 
+    if(issue) return;
+
     res.status(consts.SUCCESS_CODE)
         .json(response);
 
-}// done
+}//done
+
+async function getInfo(req, res) {
+
+    let code = req.cookies.code;
+
+    let issue = false;
+
+    let response = {
+        gift: 0,
+        credit: 0,
+        giftList: [],
+        creditList: [],
+        inviteList: [],
+    };
+
+    await Student.findOne({code}).populate(["inviteds", "gifts"]).exec( async function(err, data){
+
+        response.gift = data.gift;
+        response.credit = data.credit;
+        
+        let gifts = data.gifts;
+
+        let inviteds = data.inviteds;
+
+        gifts.forEach(gift => {
+            response.giftList.push({date:gift.created, gift: gift.price, info: gift.info});
+        });
+
+        inviteds.forEach(invited=>{
+            response.inviteList.push({date:invited.created, firstName:invited.firstName, lastName:invited.lastName})
+        });
+        
+
+        for(const inv of inviteds){
+
+            let result = await Student.findOne({_id:inv._id}).populate("purchases").exec();
+
+            console.log(result);
+
+            for(const fPurchase of result.purchases){
+                
+
+                response.creditList.push({date: fPurchase.created,
+                    credit: (fPurchase.payed * (fPurchase.percent / 100)),
+                    name: result.lastName+' '+result.firstName});
+            }
+        }
+
+        console.log(response);
+        res.status(consts.SUCCESS_CODE).json(response);
+        
+    });    
+
+}//done
 
 
 async function createCode(grade) {
@@ -416,8 +381,184 @@ async function createCode(grade) {
     if (issue) return;
 
     return (latestCode + 1);
+}//done
+
+
+async function signUp(req, res, next) {
+
+    let params = req.body;
+
+    let issue = validator.validateSignUp(req, res);
+
+    let studentToRegister;
+
+    // if student has temp code
+    if(params.code) {
+
+        let query = {
+            code: Number(params.code)
+        };
+
+        await Student.findOne(query, function(err, student) {
+    
+            if (err) {
+                errHandler(err, res);
+                issue = true;
+    
+            } else if (student) { // if a student was found
+    
+                if (!student.firstName && !student.lastName) { // if student wasn't registered before
+    
+                    config.log(`student wasn't registered`);
+
+                    student.firstName = params.firstName;
+                    student.lastName = params.lastName;
+                    student.field = params.field;
+                    student.grade = params.grade;
+                    student.phone = params.phone;
+                    student.home = params.home;
+                    student.school = params.school;
+
+                    studentToRegister = student;
+
+                } else { // if student was registered before
+                    issue = true;
+                    res.status(consts.BAD_REQ_CODE)
+                        .json({
+                            error: consts.STUDENT_ALREADY_REGISTERED
+                        });
+                }
+    
+            } else {
+                issue = true;
+                res.status(consts.NOT_FOUND_CODE)
+                    .json({
+                        error: consts.INCORRECT_MAHTA_ID
+                    });
+            }
+        });
+    
+        if (issue) return;
+    
+    } else { // else if student does not have temp code
+
+        studentToRegister = new Student({});
+
+        studentToRegister._id = new mongoose.Types.ObjectId();
+        studentToRegister.firstName = params.firstName;
+        studentToRegister.lastName = params.lastName;
+        studentToRegister.grade = params.grade;
+        studentToRegister.field = params.field;
+        studentToRegister.phone = params.phone;
+        studentToRegister.home = params.home;
+        studentToRegister.school = params.school;
+    }
+
+    // creating main code
+    studentToRegister.code = await createCode(params.grade);
+
+    if (issue) return;
+
+    // saving student
+    studentToRegister.save((err => {
+        config.log(`in save student & student.code is ${studentToRegister.code}`);
+        if (err) {
+            errHandler(err, res);
+
+        } else {
+            res.status(consts.SUCCESS_CODE).json(studentToRegister.code);
+        }
+    }));
+}
+
+async function signUp3(req, res){
+
+    let issue = validator.validateSignUp(req, res);
+
+    let code =  req.body.code; // for debugging purposes
+    let inviterCode = req.body.inviterCode;
+
+    let studentToSave;
+    let inviterToSave;
+
+    // check if student exists
+    await Student.findOne({code: code}, (err, student)=>{
+
+        if(err){
+            errHandler(err, res);
+            issue = true;
+
+        } else if (student){
+
+            // if already had inviter
+            if (student.inviter) {
+
+                issue = true;
+                res.status(consts.BAD_REQ_CODE)
+                    .json({
+                        error: consts.INVITER_ALREADY_REGISTERED
+                    });
+                return;
+            }
+
+            studentToSave = student;
+
+        } else if (!student){
+            issue = true;
+            res.status(consts.NOT_FOUND_CODE)
+                .json({
+                    error: consts.INCORRECT_MAHTA_ID
+                });
+        }
+    });
+
+    if (issue) return;
+
+    // finding inviter
+    await Student.findOne({code: inviterCode}, (err, inviter) => {
+
+        if(err){
+            errHandler(err, res);
+            issue = true;
+
+        } else if (inviter){ // if inviter was found
+
+            // set the inviter
+            studentToSave.inviter = inviter._id;
+
+            inviterToSave = inviter;
+
+        } else if (!inviter) { // if inviter was not found
+            issue = true;
+            res.status(consts.NOT).json(studentToRegister);
+        }
+    });
+
+    if (issue) return;
+
+    // saving student
+    await studentToSave.save(err => {
+
+        if (err) {
+            issue = true;
+            errHandler(err, res);
+        }
+    });
+
+    // saving inviter
+    await inviterToSave.save(err => {
+
+        if (err) {
+            errHandler(err, res);
+
+        } else {
+            res.status(consts.SUCCESS_CODE).json({
+                firstName: inviterToSave.firstName,
+                lastname: inviterToSave.lastName,
+            });
+        }
+    });
 }
 
 
-
-module.exports = {signUp, setInviter, getInfo};
+module.exports = {signUp1, signUp2, getInfo};
