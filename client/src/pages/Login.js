@@ -46,7 +46,7 @@ class LoginPage extends Component{
                 LoginPage.invited = false;
                 LoginPage.registered = true;
                 this.props.history.push("/");
-            
+
             }else{
 
                 LoginPage.invited = false;

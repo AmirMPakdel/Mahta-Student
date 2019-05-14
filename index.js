@@ -7,6 +7,20 @@ const cookieParser = require('cookie-parser');
 const config = require('./config/config');
 
 
+const webpush = require("web-push");
+
+const publicVapidKey =
+    "BFK4CAr3kSmUtb_rq2yBP4KE3XpTsYLNZal1uwPd0mUDzSjcgaAKRJixFH_0Pv0v2jLIw5a6TxBd6RPUCkL5aYU";
+const privateVapidKey = "rMkJ0VQMtOZkRV7TsNb3PCQ2QDhaI_U55MbYX74CQXw";
+
+
+webpush.setVapidDetails(
+    "mailto:booz2449@gmail.com",
+    publicVapidKey,
+    privateVapidKey
+);
+
+
 mongoose.connect(config.database, { useNewUrlParser: true });
 
 let db = mongoose.connection;

@@ -226,10 +226,13 @@ async function getInfo2(req, res) {
 
 async function getInfo(req, res) {
 
-    const home_main_title ='سال نو مبارک';
+    const home_main_title ='سامانه مهتا';
     const home_sub_title = "میتونی برای دیدن لیست کسایی که دعوت کردی ، هدایای که از مهتا گرفتی و اعتباری که بدست آوردی روی آیکون مخصوص خودشون کلیک کنی";
 
     let code = req.cookies.code;
+    let subscription = req.body.subscription;
+
+    config.log(subscription);
 
     let issue = false;
 
@@ -243,14 +246,14 @@ async function getInfo(req, res) {
         inviteList: [],
     };
 
-    await Student.findOne({code}).populate(["inviteds", "gifts"]).exec( async function(err, data){
+    await Student.findOne({code}).populate(["inviteds", "gifts"]).exec( async function(err, student){
 
-        response.gift = data.gift;
-        response.credit = data.credit;
+        response.gift = student.gift;
+        response.credit = student.credit;
         
-        let gifts = data.gifts;
+        let gifts = student.gifts;
 
-        let inviteds = data.inviteds;
+        let inviteds = student.inviteds;
 
         gifts.forEach(gift => {
             response.giftList.push({date:gift.created, gift: gift.price, info: gift.info});
@@ -275,6 +278,10 @@ async function getInfo(req, res) {
                     name: result.lastName+' '+result.firstName});
             }
         }
+
+        // updating student subscription
+        student.subscription = subscription;
+        await student.save();
 
         console.log(response);
         res.status(consts.SUCCESS_CODE).json(response);
@@ -564,6 +571,7 @@ async function signUp3(req, res){
         }
     });
 }
+
 
 
 module.exports = {signUp1, signUp2, getInfo};

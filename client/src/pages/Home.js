@@ -41,8 +41,15 @@ class HomePage extends Component {
         }, err=>{
 
             alert(err);
-        })
+        });
+
+        if (Notification.permission !== 'granted') {
+            Notification.requestPermission();
+        }
+
+
     }
+
 
     render() { 
         return ( 

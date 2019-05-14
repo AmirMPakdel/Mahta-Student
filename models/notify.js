@@ -32,4 +32,3 @@ let notifySchema = mongoose.Schema({
 });
 
 let Notify = module.exports = mongoose.model('Notify', notifySchema);
-
