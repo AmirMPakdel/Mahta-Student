@@ -70,35 +70,42 @@ async function signUp2(req, res){
 
         return;
 
-    }else{
+    } else {
 
-        Student.findOne({code:inviterCode}, (err, inviter)=>{
+        let newStudent = new Student();
+        let inviterToSave;
+
+        await Student.findOne({code:inviterCode}, (err, inviter)=>{
             
             if(err || !inviter){
 
                 res.status(consts.BAD_REQ_CODE).json({error:consts.INCORRECT_INVITER_ID});
             
-            }else{
+            } else {
 
-                let newStudent = new Student();
                 newStudent.firstName = params.firstName;
                 newStudent.lastName = params.lastName;
                 newStudent.field = params.field;
                 newStudent.grade = params.grade;
                 newStudent.phone = params.phone;
                 newStudent.inviter = inviter;
-                createCode(newStudent.grade).then(code=>{
-                    newStudent.code = code;
-                    newStudent.save();
 
-                    inviter.inviteds.push(newStudent._id);
-                    inviter.save();
-
-                    res.cookie('code', code, {expires: new Date(Date.now()+ 259200000)}).
-                    status(consts.SUCCESS_CODE).json({code});
-                });
+                inviterToSave = inviter;
             }
         });
+
+        newStudent._id = new mongoose.Types.ObjectId();
+        newStudent.code = await createCode(newStudent.grade);
+
+        await newStudent.save();
+
+        inviterToSave.inviteds.push(newStudent._id);
+        await inviterToSave.save();
+
+        res.cookie('code', newStudent.code, {expires: new Date(Date.now()+ 259200000)}).
+        status(consts.SUCCESS_CODE).json({code: newStudent.code});
+
+
     }
 }//done
 
@@ -247,6 +254,16 @@ async function getInfo(req, res) {
     };
 
     await Student.findOne({code}).populate(["inviteds", "gifts"]).exec( async function(err, student){
+
+        if (err) {
+            errHandler(err, res);
+            issue = true;
+            return;
+        } else if (!student) {
+            res.status(consts.NOT_FOUND_CODE).json(consts.INCORRECT_MAHTA_ID);
+            issue = true;
+            return;
+        }
 
         response.gift = student.gift;
         response.credit = student.credit;
@@ -494,7 +511,7 @@ async function signUp3(req, res){
     let inviterToSave;
 
     // check if student exists
-    await Student.findOne({code: code}, (err, student)=>{
+    await Student.findOne({code: code}, (err, student) => {
 
         if(err){
             errHandler(err, res);
@@ -549,26 +566,14 @@ async function signUp3(req, res){
     if (issue) return;
 
     // saving student
-    await studentToSave.save(err => {
-
-        if (err) {
-            issue = true;
-            errHandler(err, res);
-        }
-    });
+    await studentToSave.save();
 
     // saving inviter
-    await inviterToSave.save(err => {
+    await inviterToSave.save();
 
-        if (err) {
-            errHandler(err, res);
-
-        } else {
-            res.status(consts.SUCCESS_CODE).json({
-                firstName: inviterToSave.firstName,
-                lastname: inviterToSave.lastName,
-            });
-        }
+    res.status(consts.SUCCESS_CODE).json({
+        firstName: inviterToSave.firstName,
+        lastname: inviterToSave.lastName,
     });
 }
 
